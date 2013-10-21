@@ -64,27 +64,6 @@ void I2C::setSpeed(uint8_t fast)
 }
 
 
-/*
-  Return values for new functions that use the timeOut feature
-  will now return at what point in the transmission the timeout
-  occurred. Looking at a full communication sequence between a
-  master and slave (transmit data and then readback data) there
-  a total of 7 points in the sequence where a timeout can occur.
-  These are listed below and correspond to the returned value:
-  1 - Waiting for successful completion of a Start bit
-  2 - Waiting for ACK/NACK while addressing slave in transmit mode (MT)
-  3 - Waiting for ACK/NACK while sending data to the slave
-  4 - Waiting for successful completion of a Repeated Start
-  5 - Waiting for ACK/NACK while addressing slave in receiver mode (MR)
-  6 - Waiting for ACK/NACK while receiving data from the slave
-  7 - Waiting for successful completion of the Stop bit
-
-  All possible return values:
-  0           Function executed with no errors
-  1 - 7       Timeout occurred, see above list
-  8 - 0xFF    See datasheet for exact meaning
-*/
-
 uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint8_t numberBytes)
 {
   returnStatus = 0;
@@ -93,13 +72,13 @@ uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint
   returnStatus = sendAddress(SLA_W(address));
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 2; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT; }
     return returnStatus;
   }
   returnStatus = sendByte(registerAddress);
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 3; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_TRANSMITTING; }
     return returnStatus;
   }
   for(uint8_t i=0; i<numberBytes; i++)
@@ -107,14 +86,14 @@ uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint
     returnStatus = sendByte(data[i]);
     if(returnStatus)
     {
-      if(returnStatus == 1) { return 3; }
+      if(returnStatus == 1) { return I2C_TIMEOUT_TRANSMITTING; }
       return returnStatus;
     }
   }
   returnStatus = stop();
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 7; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_STOP_BIT; }
     return returnStatus;
   }
   return returnStatus;
@@ -130,25 +109,25 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
   returnStatus = sendAddress(SLA_W(address));
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 2; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT; }
     return returnStatus;
   }
   returnStatus = sendByte(registerAddress);
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 3; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_TRANSMITTING; }
     return returnStatus;
   }
   returnStatus = start();
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 4; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_REPEATED_START; }
     return returnStatus;
   }
   returnStatus = sendAddress(SLA_R(address));
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 5; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_RECEIVE; }
     return returnStatus;
   }
   for(uint8_t i=0; i<numberBytes; i++)
@@ -156,13 +135,13 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
     if(i == nack)
     {
       returnStatus = receiveByte(0);
-      if(returnStatus == 1) { return 6; }
+      if(returnStatus == 1) { return I2C_TIMEOUT_RECEIVING; }
       if(returnStatus != MR_DATA_NACK) { return returnStatus; }
     }
     else
     {
       returnStatus = receiveByte(1);
-      if(returnStatus == 1) { return 6; }
+      if(returnStatus == 1) { return I2C_TIMEOUT_RECEIVING; }
       if(returnStatus != MR_DATA_ACK) { return returnStatus; }
     }
     dataBuffer[i] = TWDR;
@@ -170,7 +149,7 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
   returnStatus = stop();
   if(returnStatus)
   {
-    if(returnStatus == 1) { return 7; }
+    if(returnStatus == 1) { return I2C_TIMEOUT_STOP_BIT; }
     return returnStatus;
   }
   return returnStatus;
