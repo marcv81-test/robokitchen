@@ -14,7 +14,7 @@ void setup()
 
 void loop()
 {
-  I2c.read(MPU6050_ADDRESS, MPU6050_WHO_AM_I, 1, &b); // read the MPU-6050 WHO_AM_I register
+  I2c.read(MPU6050_ADDRESS, MPU6050_WHO_AM_I, &b, 1); // read the MPU-6050 WHO_AM_I register
   Serial.println(b, 16); // print the result
   delay(1000);
 }

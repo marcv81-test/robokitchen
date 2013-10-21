@@ -82,8 +82,6 @@
 #define cbi(sfr, bit)   (_SFR_BYTE(sfr) &= ~_BV(bit))
 #define sbi(sfr, bit)   (_SFR_BYTE(sfr) |= _BV(bit))
 
-#define MAX_BUFFER_SIZE 32
-
 
 
 
@@ -96,21 +94,8 @@ class I2C
     void timeOut(uint16_t);
     void setSpeed(uint8_t); 
     void pullup(uint8_t);
-    void scan();
-    uint8_t available();
-    uint8_t receive();
-    uint8_t write(uint8_t, uint8_t);
-    uint8_t write(int, int); 
-    uint8_t write(uint8_t, uint8_t, uint8_t);
-    uint8_t write(int, int, int);
-    uint8_t write(uint8_t, uint8_t, char*);
     uint8_t write(uint8_t, uint8_t, uint8_t*, uint8_t);
-    uint8_t read(uint8_t, uint8_t);
-    uint8_t read(int, int);
-    uint8_t read(uint8_t, uint8_t, uint8_t);
-    uint8_t read(int, int, int);
-    uint8_t read(uint8_t, uint8_t, uint8_t*);
-    uint8_t read(uint8_t, uint8_t, uint8_t, uint8_t*);
+    uint8_t read(uint8_t, uint8_t, uint8_t*, uint8_t);
 
 
   private:
@@ -122,10 +107,6 @@ class I2C
     void lockUp();
     uint8_t returnStatus;
     uint8_t nack;
-    uint8_t data[MAX_BUFFER_SIZE];
-    static uint8_t bytesAvailable;
-    static uint8_t bufferIndex;
-    static uint8_t totalBytes;
     static uint16_t timeOutDelay;
 
 };
