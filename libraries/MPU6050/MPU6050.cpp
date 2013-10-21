@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include <I2C.h>
-#include <Endian.h>
 
 #include "MPU6050.h"
+
+#include "I2C.h"
+#include "Endian.h"
 
 // ================================ Public ================================ //
 

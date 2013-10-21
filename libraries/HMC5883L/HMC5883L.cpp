@@ -1,8 +1,9 @@
 #include <Arduino.h>
-#include <I2C.h>
-#include <Endian.h>
 
 #include "HMC5883L.h"
+
+#include "I2C.h"
+#include "Endian.h"
 
 // ================================ Public ================================ //
 

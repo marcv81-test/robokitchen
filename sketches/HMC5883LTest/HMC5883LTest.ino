@@ -1,6 +1,6 @@
-#include <I2C.h>
-#include <HMC5883L.h>
-#include <Endian.h>
+#include "I2C.h"
+#include "HMC5883L.h"
+#include "Endian.h"
 
 void setup()
 {
