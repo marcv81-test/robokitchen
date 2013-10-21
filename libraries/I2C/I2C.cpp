@@ -36,7 +36,7 @@ void I2C::begin()
   // Initialise TWI prescaler and bit rate
   cbi(TWSR, TWPS0);
   cbi(TWSR, TWPS1);
-  TWBR = ((F_CPU / 100000) - 16) / 2;
+  TWBR = ((F_CPU / I2C_SPEED) - 16) / 2;
   // Enable TWI module and ACKs
   TWCR = _BV(TWEN) | _BV(TWEA);
 }
@@ -45,24 +45,6 @@ void I2C::end()
 {
   TWCR = 0;
 }
-
-void I2C::timeOut(uint16_t timeOut)
-{
-  timeOutDelay = timeOut;
-}
-
-void I2C::setSpeed(uint8_t fast)
-{
-  if(!fast)
-  {
-    TWBR = ((F_CPU / 100000) - 16) / 2;
-  }
-  else
-  {
-    TWBR = ((F_CPU / 400000) - 16) / 2;
-  }
-}
-
 
 uint8_t I2C::write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size)
 
@@ -160,7 +142,6 @@ uint8_t I2C::read(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size)
 
 uint8_t I2C::returnStatus;
 uint8_t I2C::nack;
-uint16_t I2C::timeOutDelay = 0;
 
 uint8_t I2C::start()
 {
@@ -168,8 +149,7 @@ uint8_t I2C::start()
   TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
   while (!(TWCR & (1 << TWINT)))
   {
-    if(!timeOutDelay) { continue; }
-    if((millis() - startingTime) >= timeOutDelay)
+    if((millis() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -195,8 +175,7 @@ uint8_t I2C::sendAddress(uint8_t i2cAddress)
   TWCR = (1 << TWINT) | (1 << TWEN);
   while (!(TWCR & (1 << TWINT)))
   {
-    if(!timeOutDelay) { continue; }
-    if((millis() - startingTime) >= timeOutDelay)
+    if((millis() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -226,8 +205,7 @@ uint8_t I2C::sendByte(uint8_t i2cData)
   TWCR = (1 << TWINT) | (1 << TWEN);
   while (!(TWCR & (1 << TWINT)))
   {
-    if(!timeOutDelay) { continue; }
-    if((millis() - startingTime) >= timeOutDelay)
+    if((millis() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -263,8 +241,7 @@ uint8_t I2C::receiveByte(uint8_t ack)
   }
   while (!(TWCR & (1 << TWINT)))
   {
-    if(!timeOutDelay) { continue; }
-    if((millis() - startingTime) >= timeOutDelay)
+    if((millis() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -285,8 +262,7 @@ uint8_t I2C::stop()
   TWCR = (1 << TWINT) | (1 << TWEN)| (1 << TWSTO);
   while ((TWCR & (1 << TWSTO)))
   {
-    if(!timeOutDelay) { continue; }
-    if((millis() - startingTime) >= timeOutDelay)
+    if((millis() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;

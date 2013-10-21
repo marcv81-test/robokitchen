@@ -19,6 +19,9 @@
 #ifndef I2C_H
 #define I2C_H
 
+#define I2C_SPEED 100000 // 100kHz or 400kHz
+#define I2C_TIMEOUT 5 // 5ms
+
 #define I2C_TIMEOUT_START_BIT 1
 #define I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT 2
 #define I2C_TIMEOUT_TRANSMITTING 3
@@ -49,8 +52,6 @@ class I2C
   public:
     static void begin();
     static void end();
-    static void timeOut(uint16_t timeOut);
-    static void setSpeed(uint8_t fast);
     static uint8_t write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size);
     static uint8_t read(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size);
   private:
@@ -62,7 +63,6 @@ class I2C
     static void lockUp();
     static uint8_t returnStatus;
     static uint8_t nack;
-    static uint16_t timeOutDelay;
 };
 
 #endif // I2C_H
