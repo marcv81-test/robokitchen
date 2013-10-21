@@ -63,37 +63,6 @@ void I2C::setSpeed(uint8_t fast)
   }
 }
 
-void I2C::pullup(uint8_t activate)
-{
-  if(activate)
-  {
-    #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
-      // Activate internal pull-ups for TWI
-      // As per note from ATmega8 manual page 167
-      sbi(PORTC, 4);
-      sbi(PORTC, 5);
-    #else
-      // Activate internal pull-ups for TWI
-      // As per note from ATmega128 manual page 204
-      sbi(PORTD, 0);
-      sbi(PORTD, 1);
-    #endif
-  }
-  else
-  {
-    #if defined(__AVR_ATmega168__) || defined(__AVR_ATmega8__) || defined(__AVR_ATmega328P__)
-      // Deactivate internal pull-ups for TWI
-      // As per note from ATmega8 manual page 167
-      cbi(PORTC, 4);
-      cbi(PORTC, 5);
-    #else
-      // Deactivate internal pull-ups for TWI
-      // As per note from ATmega128 manual page 204
-      cbi(PORTD, 0);
-      cbi(PORTD, 1);
-    #endif
-  }
-}
 
 /*
   Return values for new functions that use the timeOut feature
