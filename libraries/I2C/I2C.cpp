@@ -64,11 +64,9 @@
 
 
 
+uint8_t I2C::returnStatus;
+uint8_t I2C::nack;
 uint16_t I2C::timeOutDelay = 0;
-
-I2C::I2C()
-{
-}
 
 
 ////////////// Public Methods ////////////////////////////////////////
@@ -411,6 +409,3 @@ void I2C::lockUp()
   TWCR = 0; //releases SDA and SCL lines to high impedance
   TWCR = _BV(TWEN) | _BV(TWEA); //reinitialize TWI 
 }
-
-I2C I2c = I2C();
-

@@ -88,29 +88,26 @@
 class I2C
 {
   public:
-    I2C();
-    void begin();
-    void end();
-    void timeOut(uint16_t);
-    void setSpeed(uint8_t); 
-    void pullup(uint8_t);
-    uint8_t write(uint8_t, uint8_t, uint8_t*, uint8_t);
-    uint8_t read(uint8_t, uint8_t, uint8_t*, uint8_t);
+    static void begin();
+    static void end();
+    static void timeOut(uint16_t);
+    static void setSpeed(uint8_t); 
+    static void pullup(uint8_t);
+    static uint8_t write(uint8_t, uint8_t, uint8_t*, uint8_t);
+    static uint8_t read(uint8_t, uint8_t, uint8_t*, uint8_t);
 
 
   private:
-    uint8_t start();
-    uint8_t sendAddress(uint8_t);
-    uint8_t sendByte(uint8_t);
-    uint8_t receiveByte(uint8_t);
-    uint8_t stop();
-    void lockUp();
-    uint8_t returnStatus;
-    uint8_t nack;
+    static uint8_t start();
+    static uint8_t sendAddress(uint8_t);
+    static uint8_t sendByte(uint8_t);
+    static uint8_t receiveByte(uint8_t);
+    static uint8_t stop();
+    static void lockUp();
+    static uint8_t returnStatus;
+    static uint8_t nack;
     static uint16_t timeOutDelay;
 
 };
-
-extern I2C I2c;
 
 #endif
