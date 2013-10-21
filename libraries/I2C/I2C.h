@@ -51,9 +51,8 @@ class I2C
     static void end();
     static void timeOut(uint16_t timeOut);
     static void setSpeed(uint8_t fast);
-    static uint8_t write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint8_t numberBytes);
-    static uint8_t read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer, uint8_t numberBytes);
-
+    static uint8_t write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size);
+    static uint8_t read(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size);
   private:
     static uint8_t start();
     static uint8_t sendAddress(uint8_t i2cAddress);

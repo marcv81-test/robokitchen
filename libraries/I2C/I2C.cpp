@@ -64,7 +64,8 @@ void I2C::setSpeed(uint8_t fast)
 }
 
 
-uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint8_t numberBytes)
+uint8_t I2C::write(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size)
+
 {
   returnStatus = 0;
   returnStatus = start();
@@ -75,13 +76,13 @@ uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint
     if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT; }
     return returnStatus;
   }
-  returnStatus = sendByte(registerAddress);
+  returnStatus = sendByte(reg);
   if(returnStatus)
   {
     if(returnStatus == 1) { return I2C_TIMEOUT_TRANSMITTING; }
     return returnStatus;
   }
-  for(uint8_t i=0; i<numberBytes; i++)
+  for(uint8_t i=0; i<size; i++)
   {
     returnStatus = sendByte(data[i]);
     if(returnStatus)
@@ -99,10 +100,10 @@ uint8_t I2C::write(uint8_t address, uint8_t registerAddress, uint8_t *data, uint
   return returnStatus;
 }
 
-uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer, uint8_t numberBytes)
+uint8_t I2C::read(uint8_t address, uint8_t reg, uint8_t *data, uint8_t size)
 {
-  if(numberBytes == 0) { numberBytes++; }
-  nack = numberBytes - 1;
+  if(size == 0) { size++; }
+  nack = size - 1;
   returnStatus = 0;
   returnStatus = start();
   if(returnStatus) { return returnStatus; }
@@ -112,7 +113,7 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
     if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT; }
     return returnStatus;
   }
-  returnStatus = sendByte(registerAddress);
+  returnStatus = sendByte(reg);
   if(returnStatus)
   {
     if(returnStatus == 1) { return I2C_TIMEOUT_TRANSMITTING; }
@@ -130,7 +131,7 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
     if(returnStatus == 1) { return I2C_TIMEOUT_ADDRESSING_TO_RECEIVE; }
     return returnStatus;
   }
-  for(uint8_t i=0; i<numberBytes; i++)
+  for(uint8_t i=0; i<size; i++)
   {
     if(i == nack)
     {
@@ -144,7 +145,7 @@ uint8_t I2C::read(uint8_t address, uint8_t registerAddress, uint8_t *dataBuffer,
       if(returnStatus == 1) { return I2C_TIMEOUT_RECEIVING; }
       if(returnStatus != MR_DATA_ACK) { return returnStatus; }
     }
-    dataBuffer[i] = TWDR;
+    data[i] = TWDR;
   }
   returnStatus = stop();
   if(returnStatus)
