@@ -145,11 +145,11 @@ uint8_t I2C::nack;
 
 uint8_t I2C::start()
 {
-  unsigned long startingTime = millis();
   TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
+  uint32_t startingTime = micros();
   while (!(TWCR & (1 << TWINT)))
   {
-    if((millis() - startingTime) >= I2C_TIMEOUT)
+    if((micros() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -171,11 +171,11 @@ uint8_t I2C::start()
 uint8_t I2C::sendAddress(uint8_t i2cAddress)
 {
   TWDR = i2cAddress;
-  unsigned long startingTime = millis();
   TWCR = (1 << TWINT) | (1 << TWEN);
+  uint32_t startingTime = micros();
   while (!(TWCR & (1 << TWINT)))
   {
-    if((millis() - startingTime) >= I2C_TIMEOUT)
+    if((micros() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -201,11 +201,11 @@ uint8_t I2C::sendAddress(uint8_t i2cAddress)
 uint8_t I2C::sendByte(uint8_t i2cData)
 {
   TWDR = i2cData;
-  unsigned long startingTime = millis();
   TWCR = (1 << TWINT) | (1 << TWEN);
+  uint32_t startingTime = micros();
   while (!(TWCR & (1 << TWINT)))
   {
-    if((millis() - startingTime) >= I2C_TIMEOUT)
+    if((micros() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -230,7 +230,6 @@ uint8_t I2C::sendByte(uint8_t i2cData)
 
 uint8_t I2C::receiveByte(uint8_t ack)
 {
-  unsigned long startingTime = millis();
   if(ack)
   {
     TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);
@@ -239,9 +238,10 @@ uint8_t I2C::receiveByte(uint8_t ack)
   {
     TWCR = (1 << TWINT) | (1 << TWEN);
   }
+  uint32_t startingTime = micros();
   while (!(TWCR & (1 << TWINT)))
   {
-    if((millis() - startingTime) >= I2C_TIMEOUT)
+    if((micros() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;
@@ -258,11 +258,11 @@ uint8_t I2C::receiveByte(uint8_t ack)
 
 uint8_t I2C::stop()
 {
-  unsigned long startingTime = millis();
   TWCR = (1 << TWINT) | (1 << TWEN)| (1 << TWSTO);
+  uint32_t startingTime = micros();
   while ((TWCR & (1 << TWSTO)))
   {
-    if((millis() - startingTime) >= I2C_TIMEOUT)
+    if((micros() - startingTime) >= I2C_TIMEOUT)
     {
       lockUp();
       return 1;

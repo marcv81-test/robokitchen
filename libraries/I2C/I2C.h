@@ -20,7 +20,7 @@
 #define I2C_H
 
 #define I2C_SPEED 100000 // 100kHz or 400kHz
-#define I2C_TIMEOUT 5 // 5ms
+#define I2C_TIMEOUT 5000 // us
 
 #define I2C_TIMEOUT_START_BIT 1
 #define I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT 2
