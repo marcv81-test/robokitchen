@@ -14,13 +14,18 @@
   Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA
 */
 
-#include <Arduino.h>
-
 #ifndef I2C_H
 #define I2C_H
 
-#define I2C_SPEED 100000 // 100kHz or 400kHz
-#define I2C_TIMEOUT 5000 // us
+#include <Arduino.h>
+#include "config.h"
+
+#ifndef I2C_SPEED
+  #define I2C_SPEED 100000 // 100kHz or 400kHz
+#endif
+#ifndef I2C_TIMEOUT
+  #define I2C_TIMEOUT 5000 // 5ms
+#endif
 
 #define I2C_TIMEOUT_START_BIT 1
 #define I2C_TIMEOUT_ADDRESSING_TO_TRANSMIT 2

@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include "config.h"
 
 #include "HMC5883L.h"
 

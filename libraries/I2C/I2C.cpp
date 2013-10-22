@@ -15,6 +15,7 @@
 */
 
 #include <Arduino.h>
+#include "config.h"
 
 #include "I2C.h"
 

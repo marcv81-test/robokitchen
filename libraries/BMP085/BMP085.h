@@ -2,8 +2,7 @@
 #define BMP085_H
 
 #include <Arduino.h>
-
-#define BMP085_DEBUG
+#include "config.h"
 
 // I2C address
 #define BMP085_ADDRESS 0x77
@@ -29,7 +28,7 @@
  * calculated during the last cycle.
  *
  * This class implements a finite-state machine to limit the time spent in the
- * refresh() function and allow the main program loop to run at higher frequencies. 
+ * refresh() function and allow the main program loop to run at higher frequencies.
  */
 class BMP085
 {

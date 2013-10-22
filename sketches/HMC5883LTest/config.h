@@ -1,0 +1,1 @@
+#define HMC5883L_DEBUG

@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "I2C.h"
 #include "HMC5883L.h"
 #include "Endian.h"
@@ -6,9 +8,11 @@ void setup()
 {
   I2C::begin();
 
-  Serial.begin(115200);
-  Serial.println("");
-  Serial.println("---");
+  #ifdef HMC5883L_DEBUG
+    Serial.begin(115200);
+    Serial.println("");
+    Serial.println("---");
+  #endif
 
   HMC5883L::init();
 }

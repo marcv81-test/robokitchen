@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #include "BMP085.h"
+#include "config.h"
 
 #include "I2C.h"
 #include "Endian.h"

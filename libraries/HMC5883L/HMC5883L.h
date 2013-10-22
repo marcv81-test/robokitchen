@@ -2,8 +2,7 @@
 #define HMC5883L_H
 
 #include <Arduino.h>
-
-#define HMC5883L_DEBUG
+#include "config.h"
 
 // I2C address
 #define HMC5883L_ADDRESS 0x1E

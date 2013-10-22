@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "I2C.h"
 #include "BMP085.h"
 #include "Endian.h"
@@ -6,9 +8,11 @@ void setup()
 {
   I2C::begin();
 
-  Serial.begin(115200);
-  Serial.println("");
-  Serial.println("---");
+  #ifdef BMP085_DEBUG
+    Serial.begin(115200);
+    Serial.println("");
+    Serial.println("---");
+  #endif
 
   BMP085::init();
 }

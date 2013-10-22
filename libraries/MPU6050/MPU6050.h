@@ -2,8 +2,7 @@
 #define MPU6050_H
 
 #include <Arduino.h>
-
-#define MPU6050_DEBUG 1
+#include "config.h"
 
 // I2C address
 #define MPU6050_ADDRESS 0x68

@@ -1,3 +1,5 @@
+#include "config.h"
+
 #include "I2C.h"
 #include "MPU6050.h"
 #include "Endian.h"
@@ -6,9 +8,11 @@ void setup()
 {
   I2C::begin();
 
-  Serial.begin(115200);
-  Serial.println("");
-  Serial.println("---");
+  #ifdef MPU6050_DEBUG
+    Serial.begin(115200);
+    Serial.println("");
+    Serial.println("---");
+  #endif
 
   MPU6050::init();
 }

@@ -2,6 +2,7 @@
 #define ENDIAN_H
 
 #include <Arduino.h>
+#include "config.h"
 
 /*! This class provides functions to swap endiannes. */
 class Endian

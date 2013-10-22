@@ -1,0 +1,1 @@
+#define BMP085_DEBUG
