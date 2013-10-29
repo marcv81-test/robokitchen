@@ -37,8 +37,8 @@ class HMC5883L
     typedef struct rawData_t
     {
       int16_t magnetX;
-      int16_t magnetY;
       int16_t magnetZ;
+      int16_t magnetY;
     };
 
     static float magnetX;
