@@ -13,7 +13,7 @@
 
 // Axis sensitivities
 #define MPU6050_ACCEL_SENSITIVITY 16384.0 // LSB per G
-#define MPU6050_GYRO_SENSITIVITY 131.0 // LSB per degree
+#define MPU6050_GYRO_SENSITIVITY 7505.7471 // LSB per radian
 
 /*!
  * This class provides functions to read 3-axis accelerometer/gyroscope data from the
