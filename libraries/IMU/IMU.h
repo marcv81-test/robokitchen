@@ -1,6 +1,9 @@
 #ifndef IMU_H
 #define IMU_H
 
+#include <Arduino.h>
+#include "config.h"
+
 #include "Quaternion.h"
 
 /*!

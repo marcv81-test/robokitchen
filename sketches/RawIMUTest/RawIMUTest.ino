@@ -1,7 +1,6 @@
 #include "config.h"
 
 #include "I2C.h"
-#include "Endian.h"
 #include "MPU6050.h"
 #include "HMC5883L.h"
 
