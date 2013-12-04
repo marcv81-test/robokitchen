@@ -39,7 +39,7 @@ class MPU6050
   private:
 
     /*! This type stores raw accelerometer/temperature/gyroscope data. */
-    typedef struct rawData_t
+    typedef struct
     {
       int16_t accelX;
       int16_t accelY;
@@ -48,7 +48,7 @@ class MPU6050
       int16_t gyroX;
       int16_t gyroY;
       int16_t gyroZ;
-    };
+    } rawData_t;
 
     static float accelX;
     static float accelY;

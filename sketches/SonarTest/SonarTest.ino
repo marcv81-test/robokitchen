@@ -11,7 +11,7 @@ volatile long sonarEchoStartTime = 0;
 volatile long sonarEchoStopTime = 0;
 volatile boolean sonarEchoAvailable = false;
 float sonarDistance = 0.0;
-long sonarNextTrigger = 0;
+uint32_t sonarNextTrigger = 0;
 
 // sonar interrupt
 void sonarEchoISR()

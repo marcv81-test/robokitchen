@@ -34,12 +34,12 @@ class HMC5883L
   private:
 
     /*! This type stores raw magnetometer data. */
-    typedef struct rawData_t
+    typedef struct
     {
       int16_t magnetX;
       int16_t magnetZ;
       int16_t magnetY;
-    };
+    } rawData_t;
 
     static float magnetX;
     static float magnetY;

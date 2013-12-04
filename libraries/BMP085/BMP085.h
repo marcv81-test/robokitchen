@@ -43,7 +43,7 @@ class BMP085
   private:
 
     /*! This type stores eleven 16-bits calibration values. */
-    typedef struct calibration_t
+    typedef struct
     {
       int16_t ac1;
       int16_t ac2;
@@ -56,16 +56,16 @@ class BMP085
       int16_t mb;
       int16_t mc;
       int16_t md;
-    };
+    } calibration_t;
 
     /*! This type enumerates the different internal states. */
-    typedef enum state_t
+    typedef enum
     {
       REQUEST_TEMPERATURE,
       READ_TEMPERATURE,
       REQUEST_PRESSURE,
       READ_PRESSURE
-    };
+    } state_t;
 
     static long pressure;
 

@@ -23,10 +23,10 @@ void loop()
 
   // print magnetometer data
   Serial.print(HMC5883L::getMagnetX(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(HMC5883L::getMagnetY(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(HMC5883L::getMagnetZ(), 4);
-  Serial.println(F(""));
+  Serial.println("");
 
 }

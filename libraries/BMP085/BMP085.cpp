@@ -65,7 +65,7 @@ uint8_t BMP085::refresh()
     }
 
     // Issue a temperature request
-    case REQUEST_TEMPERATURE:
+    case REQUEST_TEMPERATURE: default:
     {
       if (request(BMP085_REQUEST_TEMPERATURE) == 0)
         state = READ_TEMPERATURE;

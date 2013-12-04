@@ -23,18 +23,18 @@ void loop()
 
   // print accelerometer data
   Serial.print(MPU6050::getAccelX(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(MPU6050::getAccelY(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(MPU6050::getAccelZ(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
 
   // print gyroscope data
   Serial.print(MPU6050::getGyroX(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(MPU6050::getGyroY(), 4);
-  Serial.print(F(","));
+  Serial.print(",");
   Serial.print(MPU6050::getGyroZ(), 4);
-  Serial.println(F(""));
+  Serial.println("");
 
 }
