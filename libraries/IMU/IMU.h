@@ -1,9 +1,39 @@
-#define ACCEL_X MPU6050::getAccelX()
-#define ACCEL_Y MPU6050::getAccelY()
-#define ACCEL_Z MPU6050::getAccelZ()
-#define MAGNET_X -HMC5883L::getMagnetY()
-#define MAGNET_Y HMC5883L::getMagnetX()
-#define MAGNET_Z HMC5883L::getMagnetZ()
-#define GYRO_X MPU6050::getGyroX()
-#define GYRO_Y MPU6050::getGyroY()
-#define GYRO_Z MPU6050::getGyroZ()
+#ifndef IMU_H
+#define IMU_H
+
+#include "Quaternion.h"
+
+/*!
+ * This class provides the logic to combine accelerometer and gyroscope data into
+ * an attitude quaternion. Call init() once, then refresh() (expensive) in the
+ * main loop to refresh the attitude.
+ */
+class IMU
+{
+  public:
+
+    static void init();
+    static void refresh();
+
+    // Calibration
+    static void gyroCalibration();
+
+    static uint32_t getLoopTime() { return loopTime; }
+    static const Quaternion& getAttitude() { return attitude; }
+
+  private:
+
+    // Loop timer
+    static uint32_t loopTime, loopStartTime, loopStopTime;
+
+    // Attitude
+    static Quaternion attitude;
+
+    // Calibration
+    static AxisAngle gyroBias;
+    #ifdef IMU_ACCEL_ENABLE
+      static Vector accelReference;
+    #endif
+};
+
+#endif // IMU_H

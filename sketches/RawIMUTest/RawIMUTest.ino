@@ -4,7 +4,6 @@
 #include "Endian.h"
 #include "MPU6050.h"
 #include "HMC5883L.h"
-#include "IMU.h"
 
 void setup()
 {
@@ -24,27 +23,27 @@ void loop()
   MPU6050::refresh();
 
   // Print accelerometer data
-  Serial.print(ACCEL_X, 2);
+  Serial.print(IMU_ACCEL_X, 2);
   Serial.print(",");
-  Serial.print(ACCEL_Y, 2);
+  Serial.print(IMU_ACCEL_Y, 2);
   Serial.print(",");
-  Serial.print(ACCEL_Z, 2);
+  Serial.print(IMU_ACCEL_Z, 2);
   Serial.print(",");
 
   // Print magnetometer data
-  Serial.print(MAGNET_X, 2);
+  Serial.print(IMU_MAGNET_X, 2);
   Serial.print(",");
-  Serial.print(MAGNET_Y, 2);
+  Serial.print(IMU_MAGNET_Y, 2);
   Serial.print(",");
-  Serial.print(MAGNET_Z, 2);
+  Serial.print(IMU_MAGNET_Z, 2);
   Serial.print(",");
 
   // Print gyroscope data
-  Serial.print(GYRO_X, 2);
+  Serial.print(IMU_GYRO_X, 2);
   Serial.print(",");
-  Serial.print(GYRO_Y, 2);
+  Serial.print(IMU_GYRO_Y, 2);
   Serial.print(",");
-  Serial.print(GYRO_Z, 2);
+  Serial.print(IMU_GYRO_Z, 2);
   Serial.println("");
 
   delay(100);

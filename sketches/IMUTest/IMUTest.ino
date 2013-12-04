@@ -1,9 +1,7 @@
 #include "config.h"
-#include <math.h>
 
 #include "I2C.h"
-#include "Quaternion.h"
-#include "QuaternionIMU.h"
+#include "IMU.h"
 
 // Counter to reduce FPS
 uint8_t counter = 0;
@@ -15,12 +13,12 @@ void setup()
   Serial.println("---");
 
   I2C::begin();
-  QuaternionIMU::init();
+  IMU::init();
 }
 
 void loop()
 {
-  QuaternionIMU::refresh();
+  IMU::refresh();
 
   // Display
   if(counter++ == SKETCH_FRAME_DROP)
@@ -28,8 +26,8 @@ void loop()
     counter = 0;
 
     #ifdef SKETCH_VECTOR_OUTPUT
-      Vector forward = Vector(1.0, 0.0, 0.0).rotate(QuaternionIMU::getAttitude());
-      Vector down = Vector(0.0, 0.0, 1.0).rotate(QuaternionIMU::getAttitude());
+      Vector forward = Vector(1.0, 0.0, 0.0).rotate(IMU::getAttitude());
+      Vector down = Vector(0.0, 0.0, 1.0).rotate(IMU::getAttitude());
       Serial.print(forward.getX());
       Serial.print(",");
       Serial.print(forward.getY());
@@ -44,7 +42,7 @@ void loop()
       Serial.print(",");
     #endif
 
-    Serial.print(QuaternionIMU::getLoopTime());
+    Serial.print(IMU::getLoopTime());
     Serial.println("");
   }
 }

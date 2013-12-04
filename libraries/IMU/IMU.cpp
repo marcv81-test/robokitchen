@@ -1,14 +1,13 @@
 #include <Arduino.h>
 #include "config.h"
 
-#include "QuaternionIMU.h"
+#include "IMU.h"
 
 #include "MPU6050.h"
-#include "IMU.h"
 
 // ================================ Public ================================ //
 
-void QuaternionIMU::init()
+void IMU::init()
 {
   // Initialise sensors
   MPU6050::init();
@@ -17,7 +16,7 @@ void QuaternionIMU::init()
   gyroCalibration();
 }
 
-void QuaternionIMU::refresh()
+void IMU::refresh()
 {
   // Calculate loop time
   loopStopTime = micros();
@@ -28,12 +27,12 @@ void QuaternionIMU::refresh()
   MPU6050::refresh();
 
   // Calculate gyroscope rotation
-  AxisAngle gyro = AxisAngle(GYRO_X, GYRO_Y, GYRO_Z) - gyroBias;
+  AxisAngle gyro = AxisAngle(IMU_GYRO_X, IMU_GYRO_Y, IMU_GYRO_Z) - gyroBias;
   gyro *= (loopTime / 1000000.0);
 
   // Correct accelerometer error
   #ifdef IMU_ACCEL_ENABLE
-    Vector accel = Vector(ACCEL_X, ACCEL_Y, ACCEL_Z);
+    Vector accel = Vector(IMU_ACCEL_X, IMU_ACCEL_Y, IMU_ACCEL_Z);
     Vector accelReferenceRot = accelReference.rotate(attitude.conjugate());
     AxisAngle accelError = AxisAngle::fromTwoVectors(accelReferenceRot, accel);
     gyro -= (accelError * IMU_ACCEL_COEFF);
@@ -44,26 +43,26 @@ void QuaternionIMU::refresh()
   attitude.normalise();
 }
 
-void QuaternionIMU::gyroCalibration()
+void IMU::gyroCalibration()
 {
   gyroBias = AxisAngle();
   for(uint16_t i=0; i<IMU_GYRO_CALIB_SAMPLE_SIZE; i++)
   {
     MPU6050::refresh();
-    gyroBias += AxisAngle(GYRO_X, GYRO_Y, GYRO_Z);
+    gyroBias += AxisAngle(IMU_GYRO_X, IMU_GYRO_Y, IMU_GYRO_Z);
   }
   gyroBias /= IMU_GYRO_CALIB_SAMPLE_SIZE;
 }
 
 // ================================ Private ================================ //
 
-Quaternion QuaternionIMU::attitude = Quaternion();
+Quaternion IMU::attitude = Quaternion();
 
-uint32_t QuaternionIMU::loopTime = 0;
-uint32_t QuaternionIMU::loopStartTime = 0;
-uint32_t QuaternionIMU::loopStopTime = 0;
+uint32_t IMU::loopTime = 0;
+uint32_t IMU::loopStartTime = 0;
+uint32_t IMU::loopStopTime = 0;
 
-AxisAngle QuaternionIMU::gyroBias = AxisAngle();
+AxisAngle IMU::gyroBias = AxisAngle();
 #ifdef IMU_ACCEL_ENABLE
-  Vector QuaternionIMU::accelReference = Vector(0.0, 0.0, -1.0);
+  Vector IMU::accelReference = Vector(0.0, 0.0, -1.0);
 #endif
