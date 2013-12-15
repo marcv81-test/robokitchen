@@ -108,6 +108,21 @@ const Quaternion Quaternion::fromAxisAngle(const AxisAngle& a)
   );
 }
 
+float Quaternion::getRoll() const
+{
+  return atan2(2*(w*x + y*z), 1 - 2*(x*x + y*y));
+}
+
+float Quaternion::getPitch() const
+{
+  return asin(2*(w*y - x*z));
+}
+
+float Quaternion::getYaw() const
+{
+  return atan2(2*(w*z + x*y), 1 - 2*(y*y + z*z));
+}
+
 // ================================ Vector ================================ //
 
 Vector::Vector() :

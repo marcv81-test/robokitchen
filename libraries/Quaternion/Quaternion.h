@@ -48,6 +48,9 @@ class Quaternion
 
     // Conversions
     static const Quaternion fromAxisAngle(const AxisAngle& a);
+    float getRoll() const;
+    float getPitch() const;
+    float getYaw() const;
 };
 
 // ================================ Vector ================================ //
