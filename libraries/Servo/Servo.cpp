@@ -3,18 +3,6 @@
 
 #include "Servo.h"
 
-#define HIGH_LEVEL_MIN_TIME 1000
-#define HIGH_LEVEL_MAX_TIME 2000
-#define HIGH_LEVEL_AVERAGE_TIME ((HIGH_LEVEL_MIN_TIME + HIGH_LEVEL_MAX_TIME) / 2)
-
-#define CYCLE_TOTAL_TIME 2500
-#define FRAME_TOTAL_TIME 20000 // 20ms = 50Hz
-#define FRAME_SYNC_TIME (FRAME_TOTAL_TIME - (CYCLE_TOTAL_TIME * SERVO_CHANNELS))
-
-#define DELAY_SET_HIGH 13
-#define DELAY_SET_LOW 13
-#define DELAY_START_SYNC 0
-
 ISR(TIMER2_OVF_vect) { ServoTimer::interrupt(); }
 
 // ================================ ServoTimer ================================ //
@@ -72,7 +60,7 @@ void Servo::init()
   for(uint8_t i=0 ; i<SERVO_CHANNELS ; i++)
   {
     pinMode(pins[i], OUTPUT);
-    setChannel(i, HIGH_LEVEL_AVERAGE_TIME);
+    setChannel(i, (SERVO_HIGH_LEVEL_MIN_TIME + SERVO_HIGH_LEVEL_MAX_TIME) / 2);
   }
   actionStartSync();
   ServoTimer::init();
@@ -110,16 +98,16 @@ uint8_t Servo::pins[SERVO_CHANNELS] = SERVO_PINS;
 Servo::cycle_t Servo::cycles[SERVO_CHANNELS];
 
 const ServoTimer::duration_t Servo::syncDuration =
-  ServoTimer::createDuration(FRAME_SYNC_TIME - DELAY_START_SYNC);
+  ServoTimer::createDuration(SERVO_FRAME_SYNC_TIME);
 
 Servo::cycle_t Servo::createCycle(uint16_t time)
 {
-  if(time < HIGH_LEVEL_MIN_TIME) time = HIGH_LEVEL_MIN_TIME;
-  else if(time > HIGH_LEVEL_MAX_TIME) time = HIGH_LEVEL_MAX_TIME;
+  if(time < SERVO_HIGH_LEVEL_MIN_TIME) time = SERVO_HIGH_LEVEL_MIN_TIME;
+  else if(time > SERVO_HIGH_LEVEL_MAX_TIME) time = SERVO_HIGH_LEVEL_MAX_TIME;
 
   cycle_t cycle;
-  cycle.high = ServoTimer::createDuration(time - DELAY_SET_HIGH);
-  cycle.low = ServoTimer::createDuration(CYCLE_TOTAL_TIME - time - DELAY_SET_LOW);
+  cycle.high = ServoTimer::createDuration(time - SERVO_DELAY);
+  cycle.low = ServoTimer::createDuration(SERVO_CYCLE_TOTAL_TIME - time - SERVO_DELAY);
   return cycle;
 }
 

@@ -4,6 +4,24 @@
 #include <Arduino.h>
 #include "config.h"
 
+#if !defined SERVO_CHANNELS || SERVO_CHANNELS < 1 || SERVO_CHANNELS > 7
+  #error SERVO_CHANNELS must be between 1 and 7
+#endif
+
+#if !defined SERVO_HIGH_LEVEL_MIN_TIME
+  #define SERVO_HIGH_LEVEL_MIN_TIME 1000
+#endif
+#if !defined SERVO_HIGH_LEVEL_MAX_TIME
+  #define SERVO_HIGH_LEVEL_MAX_TIME 2000
+#endif
+
+#define SERVO_CYCLE_TOTAL_TIME 2500
+#define SERVO_FRAME_TOTAL_TIME 20000
+#define SERVO_FRAME_SYNC_TIME \
+  (SERVO_FRAME_TOTAL_TIME - (SERVO_CYCLE_TOTAL_TIME * SERVO_CHANNELS))
+
+#define SERVO_DELAY 13
+
 /*!
  * This class provides the timing routines used to drive servos. It uses the timer 2
  * interrupts in order to allow other operations to happen in parallel.
