@@ -18,31 +18,32 @@ void setup()
 
 void loop()
 {
-  IMU::refresh();
-
-  // Display
-  if(counter++ == SKETCH_FRAME_DROP)
+  if(IMU::refresh())
   {
-    counter = 0;
+    // Reduce display frame rate
+    if(counter++ == SKETCH_FRAME_DROP)
+    {
+      counter = 0;
 
-    #ifdef SKETCH_VECTOR_OUTPUT
-      Vector forward = Vector(1.0, 0.0, 0.0).rotate(IMU::getAttitude());
-      Vector down = Vector(0.0, 0.0, 1.0).rotate(IMU::getAttitude());
-      Serial.print(forward.getX());
-      Serial.print(",");
-      Serial.print(forward.getY());
-      Serial.print(",");
-      Serial.print(forward.getZ());
-      Serial.print(",");
-      Serial.print(down.getX());
-      Serial.print(",");
-      Serial.print(down.getY());
-      Serial.print(",");
-      Serial.print(down.getZ());
-      Serial.print(",");
-    #endif
+      #ifdef SKETCH_VECTOR_OUTPUT
+        Vector forward = Vector(1.0, 0.0, 0.0).rotate(IMU::getAttitude());
+        Vector down = Vector(0.0, 0.0, 1.0).rotate(IMU::getAttitude());
+        Serial.print(forward.getX());
+        Serial.print(",");
+        Serial.print(forward.getY());
+        Serial.print(",");
+        Serial.print(forward.getZ());
+        Serial.print(",");
+        Serial.print(down.getX());
+        Serial.print(",");
+        Serial.print(down.getY());
+        Serial.print(",");
+        Serial.print(down.getZ());
+        Serial.print(",");
+      #endif
 
-    Serial.print(IMU::getLoopTime());
-    Serial.println("");
+      Serial.print(IMU::getLoopTime());
+      Serial.println("");
+    }
   }
 }

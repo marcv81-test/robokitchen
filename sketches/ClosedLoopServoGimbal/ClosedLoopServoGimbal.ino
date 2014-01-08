@@ -22,26 +22,19 @@ void setup()
 
 void loop()
 {
-  IMU::refresh();
+  if(IMU::refresh())
+  {
+    // The IMU points backward so pitch and roll need a sign swap
+    Quaternion attitude = IMU::getAttitude();
+    float roll = -attitude.getRoll();
+    float pitch = -attitude.getPitch();
 
-  // The IMU points backward so pitch and roll need a sign swap
-  Quaternion attitude = IMU::getAttitude();
-  float roll = -attitude.getRoll();
-  float pitch = -attitude.getPitch();
-  float yaw = attitude.getYaw();
+    // Update controllers
+    rollPID.update(0.0, roll);
+    pitchPID.update(0.0, pitch);
 
-  Serial.print(roll);
-  Serial.print(", ");
-  Serial.print(pitch);
-  Serial.print(", ");
-  Serial.print(yaw);
-  Serial.println("");
-
-  // Update controllers
-  rollPID.update(0.0, roll);
-  pitchPID.update(0.0, pitch);
-
-  // Set servo output
-  Servo::setChannel(0, 1500 + pitchPID.getControl());
-  Servo::setChannel(1, 1500 + rollPID.getControl());
+    // Set servo output
+    Servo::setChannel(0, 1500 + pitchPID.getControl());
+    Servo::setChannel(1, 1500 + rollPID.getControl());
+  }
 }

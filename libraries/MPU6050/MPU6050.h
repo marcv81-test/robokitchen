@@ -27,7 +27,7 @@ class MPU6050
   public:
 
     static void init();
-    static void refresh();
+    static uint8_t refresh();
 
     static float getAccelX() { return accelX; }
     static float getAccelY() { return accelY; }

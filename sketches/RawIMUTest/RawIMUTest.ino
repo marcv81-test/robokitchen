@@ -18,32 +18,32 @@ void setup()
 
 void loop()
 {
-  HMC5883L::refresh();
-  MPU6050::refresh();
+  if(MPU6050::refresh() && HMC5883L::refresh())
+  {
+    // Print accelerometer data
+    Serial.print(IMU_ACCEL_X, 2);
+    Serial.print(",");
+    Serial.print(IMU_ACCEL_Y, 2);
+    Serial.print(",");
+    Serial.print(IMU_ACCEL_Z, 2);
+    Serial.print(",");
 
-  // Print accelerometer data
-  Serial.print(IMU_ACCEL_X, 2);
-  Serial.print(",");
-  Serial.print(IMU_ACCEL_Y, 2);
-  Serial.print(",");
-  Serial.print(IMU_ACCEL_Z, 2);
-  Serial.print(",");
+    // Print magnetometer data
+    Serial.print(IMU_MAGNET_X, 2);
+    Serial.print(",");
+    Serial.print(IMU_MAGNET_Y, 2);
+    Serial.print(",");
+    Serial.print(IMU_MAGNET_Z, 2);
+    Serial.print(",");
 
-  // Print magnetometer data
-  Serial.print(IMU_MAGNET_X, 2);
-  Serial.print(",");
-  Serial.print(IMU_MAGNET_Y, 2);
-  Serial.print(",");
-  Serial.print(IMU_MAGNET_Z, 2);
-  Serial.print(",");
+    // Print gyroscope data
+    Serial.print(IMU_GYRO_X, 2);
+    Serial.print(",");
+    Serial.print(IMU_GYRO_Y, 2);
+    Serial.print(",");
+    Serial.print(IMU_GYRO_Z, 2);
+    Serial.println("");
 
-  // Print gyroscope data
-  Serial.print(IMU_GYRO_X, 2);
-  Serial.print(",");
-  Serial.print(IMU_GYRO_Y, 2);
-  Serial.print(",");
-  Serial.print(IMU_GYRO_Z, 2);
-  Serial.println("");
-
-  delay(100);
+    delay(100);
+  }
 }

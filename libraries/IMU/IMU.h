@@ -16,7 +16,7 @@ class IMU
   public:
 
     static void init();
-    static void refresh();
+    static uint8_t refresh();
 
     // Calibration
     static void gyroCalibration();

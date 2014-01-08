@@ -37,7 +37,7 @@ class PPMRX
     static int8_t getChannel(uint8_t channelId);
 
     /*! Refresh the channels values. */
-    static void refresh();
+    static uint8_t refresh();
 
     /*! Initialise the PPM decoder. */
     static void init();
@@ -73,7 +73,7 @@ class PPMRX
     static int8_t channels[PPMRX_CHANNELS];
 
     /*! Reset the channels values. */
-    static void resetChannels();
+    static inline void resetChannels();
 
     /*! PPM decoder ISR. */
     static void interrupt();

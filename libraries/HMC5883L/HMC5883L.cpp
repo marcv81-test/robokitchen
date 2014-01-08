@@ -37,15 +37,17 @@ void HMC5883L::init()
   delay(50); // give device time to switch configuration
 }
 
-void HMC5883L::refresh()
+uint8_t HMC5883L::refresh()
 {
   // read the raw data
-  if(readRawData() != 0) return;
+  if(readRawData() != 0) return 0;
 
   // compute the magnetometer data
   magnetX = rawData.magnetX / HMC5883L_SENSITIVITY;
   magnetY = rawData.magnetY / HMC5883L_SENSITIVITY;
   magnetZ = rawData.magnetZ / HMC5883L_SENSITIVITY;
+
+  return 1;
 }
 
 // ================================ Private ================================ //

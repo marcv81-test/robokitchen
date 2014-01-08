@@ -25,7 +25,7 @@ class HMC5883L
   public:
 
     static void init();
-    static void refresh();
+    static uint8_t refresh();
 
     static float getMagnetX() { return magnetX; }
     static float getMagnetY() { return magnetY; }

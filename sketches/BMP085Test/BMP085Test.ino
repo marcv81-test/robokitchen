@@ -5,14 +5,11 @@
 
 void setup()
 {
+  Serial.begin(115200);
+  Serial.println("");
+  Serial.println("---");
+
   I2C::begin();
-
-  #ifdef BMP085_DEBUG
-    Serial.begin(115200);
-    Serial.println("");
-    Serial.println("---");
-  #endif
-
   BMP085::init();
 }
 

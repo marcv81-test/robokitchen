@@ -11,7 +11,7 @@ int8_t PPMRX::getChannel(uint8_t channelId)
   else { return channels[channelId]; }
 }
 
-void PPMRX::refresh()
+uint8_t PPMRX::refresh()
 {
   uint32_t time = micros();
   uint8_t readFrameId = frameId; // Cache frameId which is volatile
@@ -25,8 +25,7 @@ void PPMRX::refresh()
       Serial.print(time - frame[readFrameId].startTime);
       Serial.println(")");
     #endif
-    resetChannels();
-    return;
+    return 0;
   }
 
   // Incomplete frames
@@ -35,8 +34,7 @@ void PPMRX::refresh()
     #ifdef PPMRX_DEBUG
       Serial.println("PPMRX: Incomplete frame");
     #endif
-    resetChannels();
-    return;
+    return 0;
   }
 
   // Invalid frames (unexpected number of channels)
@@ -47,8 +45,7 @@ void PPMRX::refresh()
       Serial.print(frame[readFrameId].channelId);
       Serial.println(")");
     #endif
-    resetChannels();
-    return;
+    return 0;
   }
 
   // Valid frames
@@ -79,6 +76,7 @@ void PPMRX::refresh()
     Serial.print(time - frame[readFrameId].startTime);
     Serial.println(")");
   #endif
+  return 1;
 }
 
 void PPMRX::init()

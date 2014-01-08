@@ -16,7 +16,7 @@ void IMU::init()
   gyroCalibration();
 }
 
-void IMU::refresh()
+uint8_t IMU::refresh()
 {
   // Calculate loop time
   loopStopTime = micros();
@@ -24,7 +24,7 @@ void IMU::refresh()
   loopStartTime = loopStopTime;
 
   // Refresh sensors
-  MPU6050::refresh();
+  if(!MPU6050::refresh()) return 0;
 
   // Calculate gyroscope rotation
   AxisAngle gyro = AxisAngle(IMU_GYRO_X, IMU_GYRO_Y, IMU_GYRO_Z) - gyroBias;
@@ -41,6 +41,8 @@ void IMU::refresh()
   // Update attitude
   attitude = attitude * Quaternion::fromAxisAngle(gyro);
   attitude.normalise();
+
+  return 1;
 }
 
 void IMU::gyroCalibration()

@@ -59,10 +59,10 @@ void MPU6050::init()
   while (i2c_error != 0);
 }
 
-void MPU6050::refresh()
+uint8_t MPU6050::refresh()
 {
   // read the raw data
-  if(readRawData() != 0) return;
+  if(readRawData() != 0) return 0;
 
   // compute the accelerometer data
   accelX = rawData.accelX / MPU6050_ACCEL_SENSITIVITY;
@@ -73,6 +73,8 @@ void MPU6050::refresh()
   gyroX = rawData.gyroX / MPU6050_GYRO_SENSITIVITY;
   gyroY = rawData.gyroY / MPU6050_GYRO_SENSITIVITY;
   gyroZ = rawData.gyroZ / MPU6050_GYRO_SENSITIVITY;
+
+  return 1;
 }
 
 // ================================ Private ================================ //

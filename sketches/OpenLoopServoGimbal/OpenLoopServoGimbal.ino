@@ -17,21 +17,14 @@ void setup()
 
 void loop()
 {
-  IMU::refresh();
+  if(IMU::refresh())
+  {
+    Quaternion attitude = IMU::getAttitude();
+    float roll = attitude.getRoll();
+    float pitch = attitude.getPitch();
 
-  Quaternion attitude = IMU::getAttitude();
-  float roll = attitude.getRoll();
-  float pitch = attitude.getPitch();
-  float yaw = attitude.getYaw();
-
-  Serial.print(roll);
-  Serial.print(", ");
-  Serial.print(pitch);
-  Serial.print(", ");
-  Serial.print(yaw);
-  Serial.println("");
-
-  // Compensate for roll and pitch
-  Servo::setChannel(0, 1500 - (K_GIMBAL * pitch));
-  Servo::setChannel(1, 1500 - (K_GIMBAL * roll));
+    // Compensate for roll and pitch
+    Servo::setChannel(0, 1500 - (K_GIMBAL * pitch));
+    Servo::setChannel(1, 1500 - (K_GIMBAL * roll));
+  }
 }
