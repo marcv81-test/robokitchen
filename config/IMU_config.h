@@ -1,3 +1,9 @@
+#define I2C_SPEED 400000
+
+#define IMU_GYRO_CALIB_SAMPLE_SIZE 250
+#define IMU_ACCEL_ENABLE
+#define IMU_ACCEL_COEFF 0.01
+
 #define IMU_ACCEL_X MPU6050::getAccelX()
 #define IMU_ACCEL_Y MPU6050::getAccelY()
 #define IMU_ACCEL_Z MPU6050::getAccelZ()

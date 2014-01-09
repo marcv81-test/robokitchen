@@ -21,11 +21,11 @@ void loop()
   if(IMU::refresh())
   {
     // Reduce display frame rate
-    if(counter++ == SKETCH_FRAME_DROP)
+    if(counter++ == CONFIG_FRAME_DROP)
     {
       counter = 0;
 
-      #ifdef SKETCH_VECTOR_OUTPUT
+      #ifdef CONFIG_VECTOR_OUTPUT
         Vector forward = Vector(1.0, 0.0, 0.0).rotate(IMU::getAttitude());
         Vector down = Vector(0.0, 0.0, 1.0).rotate(IMU::getAttitude());
         Serial.print(forward.getX());

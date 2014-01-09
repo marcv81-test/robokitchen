@@ -1,3 +1,5 @@
+#define PPMRX_PIN 3
+
 #define SERVO_CHANNELS 2
 #define SERVO_PINS {5, 6}
 

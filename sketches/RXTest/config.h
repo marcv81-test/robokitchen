@@ -1,4 +1,4 @@
-#include "PPMRX_config.h"
+#include "OrangeRX_config.h"
+#include "ServoBoard_config.h"
 
 #define PPMRX_DEBUG
-#define PPMRX_PIN 3
