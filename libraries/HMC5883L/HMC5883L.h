@@ -45,15 +45,31 @@ class HMC5883L
     static float magnetY;
     static float magnetZ;
 
-    static rawData_t rawData;
+    /*!
+     * We alternatively read the raw magnetometer data into two different rawData_t
+     * variables. This allows hasRawDataChanged() to determine whether the data has
+     * been updated or not.
+     */
+    static rawData_t rawData[2];
+
+    /*! Index of the current raw magnetometer data variable */
+    static uint8_t rawDataIndex;
 
     /*!
-     * This function reads raw magnetometer data and stores the values in the rawData
-     * variable.
+     * This function reads the raw magnetometer data into the currently indexed
+     * rawData_t variable.
      *
      * @return I2C error code
      */
     static uint8_t readRawData();
+
+    /*!
+     * This function compares the currently indexed rawData_t variable against the
+     * previous one to determine whether the data has been updated or not.
+     *
+     * @return 1 if the set of values is new, 0 otherwise
+     */
+    static uint8_t hasRawDataChanged();
 
 };
 

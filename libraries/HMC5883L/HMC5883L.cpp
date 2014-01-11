@@ -42,10 +42,16 @@ uint8_t HMC5883L::refresh()
   // read the raw data
   if(readRawData() != 0) return 0;
 
+  // test if the data has been updated
+  if(!hasRawDataChanged()) return 0;
+
   // compute the magnetometer data
-  magnetX = rawData.magnetX / HMC5883L_SENSITIVITY;
-  magnetY = rawData.magnetY / HMC5883L_SENSITIVITY;
-  magnetZ = rawData.magnetZ / HMC5883L_SENSITIVITY;
+  magnetX = rawData[rawDataIndex].magnetX / HMC5883L_SENSITIVITY;
+  magnetY = rawData[rawDataIndex].magnetY / HMC5883L_SENSITIVITY;
+  magnetZ = rawData[rawDataIndex].magnetZ / HMC5883L_SENSITIVITY;
+
+  // increment the raw data index
+  rawDataIndex ^= 1;
 
   return 1;
 }
@@ -56,14 +62,15 @@ float HMC5883L::magnetX;
 float HMC5883L::magnetY;
 float HMC5883L::magnetZ;
 
-HMC5883L::rawData_t HMC5883L::rawData;
+HMC5883L::rawData_t HMC5883L::rawData[2];
+uint8_t HMC5883L::rawDataIndex = 0;
 
 uint8_t HMC5883L::readRawData()
 {
   uint8_t i2c_error;
   i2c_error = I2C::read(
     HMC5883L_ADDRESS, HMC5883L_DATA,
-    (uint8_t *)&rawData, sizeof(rawData)
+    (uint8_t *)&rawData[rawDataIndex], sizeof(rawData_t)
   );
   if(i2c_error != 0)
   {
@@ -73,6 +80,15 @@ uint8_t HMC5883L::readRawData()
     #endif
     return i2c_error;
   }
-  Endian::multiSwap16((uint8_t *)&rawData, 3);
+  Endian::multiSwap16((uint8_t *)&rawData[rawDataIndex], 3);
   return 0;
+}
+
+uint8_t HMC5883L::hasRawDataChanged()
+{
+  uint8_t previousRawDataIndex = rawDataIndex ^ 1;
+  return
+    (rawData[rawDataIndex].magnetX != rawData[previousRawDataIndex].magnetX) ||
+    (rawData[rawDataIndex].magnetY != rawData[previousRawDataIndex].magnetY) ||
+    (rawData[rawDataIndex].magnetZ != rawData[previousRawDataIndex].magnetZ);
 }
