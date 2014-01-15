@@ -3,6 +3,8 @@
 #define IMU_GYRO_CALIB_SAMPLE_SIZE 250
 #define IMU_ACCEL_ENABLE
 #define IMU_ACCEL_COEFF 0.01
+#define IMU_MAGNET_ENABLE
+#define IMU_MAGNET_COEFF 0.1
 
 #define IMU_ACCEL_X MPU6050::getAccelX()
 #define IMU_ACCEL_Y MPU6050::getAccelY()

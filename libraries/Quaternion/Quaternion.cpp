@@ -214,6 +214,16 @@ const Vector Vector::rotate(const Quaternion& q) const
   return *this + (t * q.getW()) + v.cross(t);
 }
 
+const Vector Vector::project(const Vector& v) const
+{
+  return v * (v.dot(*this) / v.normSquare());
+}
+
+const Vector Vector::reject(const Vector& v) const
+{
+  return *this - (*this).project(v);
+}
+
 // ================================ AxisAngle ================================ //
 
 AxisAngle::AxisAngle() :

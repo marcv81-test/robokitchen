@@ -34,9 +34,6 @@ class IMU
 
     // Calibration
     static AxisAngle gyroBias;
-    #ifdef IMU_ACCEL_ENABLE
-      static Vector accelReference;
-    #endif
 };
 
 #endif // IMU_H

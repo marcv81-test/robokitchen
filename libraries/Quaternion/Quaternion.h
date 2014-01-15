@@ -89,6 +89,8 @@ class Vector
     float dot(const Vector& v) const;
     const Vector cross(const Vector& v) const;
     const Vector rotate(const Quaternion& q) const;
+    const Vector project(const Vector &v) const;
+    const Vector reject(const Vector &v) const;
 };
 
 // ================================ AxisAngle ================================ //
