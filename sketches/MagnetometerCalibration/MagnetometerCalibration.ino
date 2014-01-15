@@ -3,6 +3,7 @@
 #include "I2C.h"
 #include "HMC5883L.h"
 #include "Quaternion.h"
+#include "Magnetometer.h"
 
 void setup()
 {
@@ -24,6 +25,11 @@ void loop()
       IMU_MAGNET_Y,
       IMU_MAGNET_Z
     );
+
+    // map magnetometer vector to unit sphere
+    #ifdef IMU_MAGNET_CALIBRATED
+      magnet = Magnetometer::mapSphere(magnet);
+    #endif
 
     // print magnetometer vector
     Serial.print(magnet.getX(), 4);
