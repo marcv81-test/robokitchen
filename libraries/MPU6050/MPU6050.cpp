@@ -44,13 +44,13 @@ void MPU6050::init()
   while (i2c_error != 0);
   delay(50); // give device time to wake up
 
-  uint8_t scale = 0b00011000; // bit 4-3: scale
+  uint8_t scale[2] = { 0b00011000, 0b00011000 };
   #ifdef MPU6050_DEBUG
     Serial.println("MPU6050: Setting gyro scale");
   #endif
   do
   {
-    i2c_error = I2C::write(MPU6050_ADDRESS, MPU6050_SCALE, &scale, 1);
+    i2c_error = I2C::write(MPU6050_ADDRESS, MPU6050_SCALE, scale, 2);
     #ifdef MPU6050_DEBUG
       Serial.print("MPU6050: Status = ");
       Serial.println(i2c_error);

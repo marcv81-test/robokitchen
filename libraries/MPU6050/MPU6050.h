@@ -8,12 +8,12 @@
 #define MPU6050_ADDRESS 0x68
 
 // Registers
-#define MPU6050_SCALE 0x1B // 1 byte (bit 4-3: scale)
+#define MPU6050_SCALE 0x1B // 2 bytes (bit 4-3: scale, for both bytes)
 #define MPU6050_CONFIG 0x6B // 1 byte (bit 7: reset, bit 6: sleep mode)
 #define MPU6050_DATA 0x3B // 3x2 bytes (gyro) + 1x2 bytes (temp) + 3x2 bytes (accel)
 
 // Axis sensitivities
-#define MPU6050_ACCEL_SENSITIVITY 16384.0 // LSB per G
+#define MPU6050_ACCEL_SENSITIVITY 2048.0 // LSB per G
 #define MPU6050_GYRO_SENSITIVITY 938.2184 // LSB per radian
 
 /*!
