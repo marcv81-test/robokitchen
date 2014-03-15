@@ -3,38 +3,36 @@
 
 #include "PID.h"
 
-#define BACK_CALCULATION if (kI != 0) totalError = (control - termP - termD) / kI
-
-PIDController::PIDController(float kP, float kI, float kD, float controlMax) :
-  kP(kP), kI(kI), kD(kD), controlMax(controlMax),
-  control(0.0), totalError(0.0), previousProcess(0.0) { }
-
-void PIDController::update(float setpoint, float process)
+PIDController::PIDController(float kP, float kI, float kD) :
+  kP(kP), kI(kI), kD(kD), control(0.0)
 {
-  // proportional term
-  float error = setpoint - process;
-  float termP = kP * error;
+  error[0] = 0.0;
+  errorDerivative[0] = 0.0;
+}
 
-  // integral term
-  totalError += error;
-  float termI = kI * totalError;
+void PIDController::update(float setpoint, float process, float time)
+{
+  // Update error history
+  error[1] = error[0];
+  error[0] = setpoint - process;
 
-  // derivative term
-  float termD = kD * (process - previousProcess);
-  previousProcess = process;
+  // Calculate error change
+  float errorChange = error[0] - error[1];
 
-  // calculate the control
-  control = termP + termI + termD;
+  // Update error derivative history
+  errorDerivative[1] = errorDerivative[0];
+  errorDerivative[0] = errorChange / time;
 
-  // limit control
-  if(control > controlMax)
-  {
-    control = controlMax;
-    BACK_CALCULATION;
-  }
-  else if(control < -controlMax)
-  {
-    control = -controlMax;
-    BACK_CALCULATION;
-  }
+  // Update control
+  control
+    += kP * errorChange
+    +  kI * error[0] * time
+    +  kD * (errorDerivative[0] - errorDerivative[1]);
+}
+
+void PIDController::reset()
+{
+  control = 0.0;
+  error[0] = 0.0;
+  errorDerivative[0] = 0.0;
 }
