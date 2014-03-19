@@ -1,8 +1,9 @@
 from visual import *
 import serial
+import sys
 
-serialFile = '/dev/ttyUSB0'
-serialPort = serial.Serial(serialFile, 115200)
+serialFile = sys.argv[1]
+serialPort = serial.Serial(serialFile, sys.argv[2])
 
 scene = display(forward=vector(1.0, 0.0, 0.0), up=vector(0.0, 0.0, -1.0))
 
