@@ -55,6 +55,15 @@ class IMU
       static const Vector getMagnet() { return magnet; }
     #endif
 
+    #ifdef IMU_ANGLES
+      static float getRoll() { return roll; }
+      static float getPitch() { return pitch; }
+      static float getYaw() { return yaw; }
+      static float getRollRate() { return rollRate; }
+      static float getPitchRate() { return pitchRate; }
+      static float getYawRate() { return yawRate; }
+    #endif
+
     // Output debug data
     #ifdef IMU_DEBUG
       static void debug();
@@ -76,6 +85,12 @@ class IMU
     #endif
     #ifdef IMU_MAGNET_ENABLE
       static Vector magnet;
+    #endif
+
+    // Angles
+    #ifdef IMU_ANGLES
+      static float roll, pitch, yaw;
+      static float rollRate, pitchRate, yawRate;
     #endif
 
     // Gyroscope calibration data

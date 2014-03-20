@@ -8,6 +8,8 @@
   #include "HMC5883L.h"
 #endif
 
+#define TAU 6.28318530718
+
 #ifdef IMU_DEBUG
   #define DEBUG_SKIP 50
 #endif
@@ -82,6 +84,35 @@ uint8_t IMU::refresh()
   attitude = attitude * Quaternion::fromAxisAngle(gyro);
   attitude.normalise();
 
+  // Update angles
+  #ifdef IMU_ANGLES
+
+    // Roll and roll rate
+    float rollTemp = attitude.getRoll();
+    rollRate = rollTemp - roll;
+    if(rollRate > (TAU / 2.0)) rollRate -= TAU;
+    else if(rollRate < (-TAU / 2.0)) rollRate += TAU;
+    rollRate /= loopTime;
+    roll = rollTemp;
+
+    // Pitch and pitch rate
+    float pitchTemp = attitude.getPitch();
+    pitchRate = pitchTemp - pitch;
+    if(pitchRate > (TAU / 2.0)) pitchRate -= TAU;
+    else if(pitchRate < (-TAU / 2.0)) pitchRate += TAU;
+    pitchRate /= loopTime;
+    pitch = pitchTemp;
+
+    // Yaw and yaw rate
+    float yawTemp = attitude.getYaw();
+    yawRate = yawTemp - yaw;
+    if(yawRate > (TAU / 2.0)) yawRate -= TAU;
+    else if(yawRate < (-TAU / 2.0)) yawRate += TAU;
+    yawRate /= loopTime;
+    yaw = yawTemp;
+
+  #endif
+
   return 1;
 }
 
@@ -131,6 +162,24 @@ uint8_t IMU::refresh()
         Serial.print(magnet.getZ(), 4);
         Serial.println();
       #endif
+
+      #ifdef IMU_ANGLES
+        Serial.print("Angles:");
+        Serial.print(IMU::getRoll());
+        Serial.print(",");
+        Serial.print(IMU::getPitch());
+        Serial.print(",");
+        Serial.print(IMU::getYaw());
+        Serial.println();
+
+        Serial.print("Rates:");
+        Serial.print(IMU::getRollRate());
+        Serial.print(",");
+        Serial.print(IMU::getPitchRate());
+        Serial.print(",");
+        Serial.print(IMU::getYawRate());
+        Serial.println();
+      #endif
     }
   }
 #endif
@@ -149,6 +198,15 @@ AxisAngle IMU::gyro = AxisAngle();
 #endif
 #ifdef IMU_MAGNET_ENABLE
   Vector IMU::magnet = Vector();
+#endif
+
+#ifdef IMU_ANGLES
+  float IMU::roll = 0.0;
+  float IMU::pitch = 0.0;
+  float IMU::yaw = 0.0;
+  float IMU::rollRate = 0.0;
+  float IMU::pitchRate = 0.0;
+  float IMU::yawRate = 0.0;
 #endif
 
 #ifdef IMU_GYRO_CALIBRATION
