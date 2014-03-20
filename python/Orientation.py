@@ -13,8 +13,12 @@ while(1):
   rate(50)
   try:
     line = serialPort.readline()
-    data = line.split(",")
-    forward.axis=vector(float(data[0]), float(data[1]), float(data[2]))
-    down.axis=vector(float(data[3]), float(data[4]), float(data[5]))
+    data = line.split(":")
+    key = data[0]
+    values = data[1].split(",")
+    if(key == 'Forward'):
+      forward.axis=vector(float(values[0]), float(values[1]), float(values[2]))
+    elif(key == 'Down'):
+      down.axis=vector(float(values[0]), float(values[1]), float(values[2]))
   except:
     pass

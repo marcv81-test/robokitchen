@@ -1,5 +1,5 @@
 % magnetometer calibration
-function [hard, soft, error] = magnetometer_calibration(data)
+function [hard, soft, error] = magnet_calibration(data)
 
   % ellipsoid fit
   [center, radii, axes] = ellipsoid_fit(data);

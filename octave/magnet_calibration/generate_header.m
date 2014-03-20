@@ -1,10 +1,12 @@
 addpath("../ellipsoid_fit/")
 
 load data.csv;
-[hard, soft, error] = magnetometer_calibration(data);
+[hard, soft, error] = magnet_calibration(data);
 
 % generate the header
 disp(sprintf("// Radius error standard deviation: %f", std(error)))
+disp("")
+disp("#define IMU_MAGNET_CALIBRATION")
 disp("")
 disp(sprintf("#define MAGNET_HARD_X %f", hard(1)))
 disp(sprintf("#define MAGNET_HARD_Y %f", hard(2)))
@@ -20,4 +22,3 @@ disp(sprintf("#define MAGNET_SOFT_ZX %f", soft(3,1)))
 disp(sprintf("#define MAGNET_SOFT_ZY %f", soft(3,2)))
 disp(sprintf("#define MAGNET_SOFT_ZZ %f", soft(3,3)))
 disp("")
-disp("#define IMU_MAGNET_CALIBRATED")
