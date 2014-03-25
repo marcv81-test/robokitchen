@@ -26,6 +26,8 @@ void IMU::init()
   #ifdef IMU_GYRO_CALIBRATION
     calibrateGyro();
   #endif
+
+  loopStartTime = micros();
 }
 
 uint8_t IMU::refresh()
