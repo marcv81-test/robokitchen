@@ -43,7 +43,7 @@ class IMU
     static void init();
     static uint8_t refresh();
 
-    static uint32_t getLoopTime() { return loopTime; }
+    static float getLoopTime() { return loopTime; }
     static const Quaternion& getAttitude() { return attitude; }
 
     // Sensors vectors accessors
@@ -63,7 +63,8 @@ class IMU
   private:
 
     // Loop timer
-    static uint32_t loopTime, loopStartTime, loopStopTime;
+    static float loopTime;
+    static uint32_t loopStartTime, loopStopTime;
 
     // Attitude
     static Quaternion attitude;

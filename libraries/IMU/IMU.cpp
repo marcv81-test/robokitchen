@@ -34,7 +34,7 @@ uint8_t IMU::refresh()
 {
   // Calculate loop time
   loopStopTime = micros();
-  loopTime = loopStopTime - loopStartTime;
+  loopTime = (loopStopTime - loopStartTime) / 1000000.0;
   loopStartTime = loopStopTime;
 
   // Refresh gyroscope and accelerometer
@@ -45,7 +45,7 @@ uint8_t IMU::refresh()
   #ifdef IMU_GYRO_CALIBRATION
     gyro -= gyroBias;
   #endif
-  gyro *= (loopTime / 1000000.0);
+  gyro *= loopTime;
 
   // Correct accelerometer error
   #ifdef IMU_ACCEL_ENABLE
@@ -137,7 +137,7 @@ uint8_t IMU::refresh()
 
 // ================================ Private ================================ //
 
-uint32_t IMU::loopTime = 0;
+float IMU::loopTime = 0.0;
 uint32_t IMU::loopStartTime = 0;
 uint32_t IMU::loopStopTime = 0;
 
