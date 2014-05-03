@@ -1,6 +1,6 @@
 #include "config.h"
 
-#include "Servo.h"
+#include "ESC.h"
 #include "PPMRX.h"
 
 int8_t throttle, rudder, elevator, ailerons;
@@ -9,29 +9,29 @@ int8_t throttle, rudder, elevator, ailerons;
 
 void initMotors()
 {
-  for(int i=0 ; i<4 ; i++) Servo::setChannel(i, MOTOR_MAX);
+  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_MAX);
   delay(3000);
 
-  for(int i=0 ; i<4 ; i++) Servo::setChannel(i, MOTOR_STALL);
+  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_STALL);
   delay(2000);
 }
 
 void stopMotors()
 {
-  for(int i=0 ; i<4 ; i++) Servo::setChannel(i, MOTOR_OFF);
+  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_OFF);
 }
 
 void updateMotors()
 {
-  Servo::setChannel(MOTOR_FRONT, MOTOR_OFF + 10 * ((uint16_t) ABS(throttle)));
-  Servo::setChannel(MOTOR_LEFT, MOTOR_OFF + 10 * ((uint16_t) ABS(rudder)));
-  Servo::setChannel(MOTOR_BACK, MOTOR_OFF + 10 * ((uint16_t) ABS(elevator)));
-  Servo::setChannel(MOTOR_RIGHT, MOTOR_OFF + 10 * ((uint16_t) ABS(ailerons)));
+  ESC::setChannel(MOTOR_FRONT, MOTOR_OFF + 10 * ((uint16_t) ABS(throttle)));
+  ESC::setChannel(MOTOR_LEFT, MOTOR_OFF + 10 * ((uint16_t) ABS(rudder)));
+  ESC::setChannel(MOTOR_BACK, MOTOR_OFF + 10 * ((uint16_t) ABS(elevator)));
+  ESC::setChannel(MOTOR_RIGHT, MOTOR_OFF + 10 * ((uint16_t) ABS(ailerons)));
 }
 
 void setup()
 {
-  Servo::init();
+  ESC::init();
   initMotors();
 
   Serial.begin(115200);
