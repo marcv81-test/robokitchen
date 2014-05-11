@@ -27,6 +27,22 @@ PIDController yawRatePID = PIDController(
   PID_YAW_RATE_KD
 );
 
+#ifdef ATTITUDE_MODE
+
+  // Roll and pitch angles PIDs
+  PIDController rollPID = PIDController(
+    PID_ROLL_PITCH_KP,
+    PID_ROLL_PITCH_KI,
+    PID_ROLL_PITCH_KD
+  );
+  PIDController pitchPID = PIDController(
+    PID_ROLL_PITCH_KP,
+    PID_ROLL_PITCH_KI,
+    PID_ROLL_PITCH_KD
+  );
+
+#endif
+
 // Calibrate the ESCs controlling the motors
 void initMotors()
 {
@@ -49,22 +65,56 @@ void stopMotors()
   rollRatePID.reset();
   pitchRatePID.reset();
   yawRatePID.reset();
+  #ifdef ATTITUDE_MODE
+    rollPID.reset();
+    pitchPID.reset();
+  #endif
 }
 
 // Update the motors to follow the sticks
 void updateMotors()
 {
-  // Update the roll and pitch rates PIDs
-  rollRatePID.update(
-    MAX_ROLL_PITCH_RATE * ailerons / 100.0,
-    IMU::getRollRate(),
-    IMU::getLoopTime()
-  );
-  pitchRatePID.update(
-    MAX_ROLL_PITCH_RATE * elevator / 100.0,
-    IMU::getPitchRate(),
-    IMU::getLoopTime()
-  );
+  #ifdef ATTITUDE_MODE
+
+    // Update the roll and pitch angles PIDs
+    rollPID.update(
+      MAX_ROLL_PITCH * ailerons / 100.0,
+      IMU::getRoll(),
+      IMU::getLoopTime()
+    );
+    pitchPID.update(
+      MAX_ROLL_PITCH * elevator / 100.0,
+      IMU::getPitch(),
+      IMU::getLoopTime()
+    );
+
+    // Update the roll and pitch rates PIDs
+    rollRatePID.update(
+      rollPID.getControl(),
+      IMU::getRollRate(),
+      IMU::getLoopTime()
+    );
+    pitchRatePID.update(
+      pitchPID.getControl(),
+      IMU::getPitchRate(),
+      IMU::getLoopTime()
+    );
+
+  #else
+
+    // Update the roll and pitch rates PIDs
+    rollRatePID.update(
+      MAX_ROLL_PITCH_RATE * ailerons / 100.0,
+      IMU::getRollRate(),
+      IMU::getLoopTime()
+    );
+    pitchRatePID.update(
+      MAX_ROLL_PITCH_RATE * elevator / 100.0,
+      IMU::getPitchRate(),
+      IMU::getLoopTime()
+    );
+
+  #endif
 
   // Update the yaw rate PID
   yawRatePID.update(
