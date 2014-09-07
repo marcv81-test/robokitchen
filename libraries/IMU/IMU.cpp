@@ -81,36 +81,18 @@ uint8_t IMU::refresh()
   #endif
 
   // Update attitude
-  attitude = attitude * Quaternion::fromAxisAngle(gyro);
+  Quaternion loopRotation = Quaternion::fromAxisAngle(gyro);
+  attitude = attitude * loopRotation;
   attitude.normalise();
 
   // Update angles
   #ifdef IMU_ANGLES
-
-    // Roll and roll rate
-    float rollTemp = attitude.getRoll();
-    rollRate = rollTemp - roll;
-    if(rollRate > (TAU / 2.0)) rollRate -= TAU;
-    else if(rollRate < (-TAU / 2.0)) rollRate += TAU;
-    rollRate /= loopTime;
-    roll = rollTemp;
-
-    // Pitch and pitch rate
-    float pitchTemp = attitude.getPitch();
-    pitchRate = pitchTemp - pitch;
-    if(pitchRate > (TAU / 2.0)) pitchRate -= TAU;
-    else if(pitchRate < (-TAU / 2.0)) pitchRate += TAU;
-    pitchRate /= loopTime;
-    pitch = pitchTemp;
-
-    // Yaw and yaw rate
-    float yawTemp = attitude.getYaw();
-    yawRate = yawTemp - yaw;
-    if(yawRate > (TAU / 2.0)) yawRate -= TAU;
-    else if(yawRate < (-TAU / 2.0)) yawRate += TAU;
-    yawRate /= loopTime;
-    yaw = yawTemp;
-
+    roll = attitude.getRoll();
+    pitch = attitude.getPitch();
+    yaw = attitude.getYaw();
+    rollRate = loopRotation.getRoll() / loopTime;
+    pitchRate = loopRotation.getPitch() / loopTime;
+    yawRate = loopRotation.getYaw() / loopTime;
   #endif
 
   return 1;
