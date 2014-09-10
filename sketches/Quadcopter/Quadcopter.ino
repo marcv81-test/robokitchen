@@ -195,14 +195,34 @@ void loop()
       if ((ailerons < RX_CENTER) && (ailerons > -RX_CENTER)) ailerons = 0;
 
       // If we could read the IMU update the motors
-      if(readIMU) updateMotors();
+      if(readIMU)
+      {
+        updateMotors();
+        #ifdef IMU_DEBUG
+          IMU::debug();
+        #endif
+        #ifdef PID_DEBUG
+          rollPIDDebug();
+        #endif
+      }
     }
   }
 
   // If could not read the sticks stop the motors
   else stopMotors();
-
-  #ifdef IMU_DEBUG
-    if(readIMU) IMU::debug();
-  #endif
 }
+
+#ifdef PID_DEBUG
+  void rollPIDDebug()
+  {
+    Serial.print("Roll:");
+    Serial.print(ESC::getChannel(MOTOR_LEFT));
+    Serial.print(",");
+    Serial.print(ESC::getChannel(MOTOR_RIGHT));
+    Serial.print(",");
+    Serial.print(IMU::getRollRate(), 3);
+    Serial.print(",");
+    Serial.print(IMU::getLoopTime(), 5);
+    Serial.println("");
+  }
+#endif

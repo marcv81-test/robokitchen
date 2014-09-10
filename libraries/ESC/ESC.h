@@ -24,8 +24,21 @@ class ESC
      */
     static void setChannel(uint8_t channelId, uint16_t time);
 
+    /*!
+     * Get the PWM cycle of a channel.
+     *
+     * @param channelId ID of the channel to get
+     * @return High level time in microseconds
+     */
+    static uint16_t getChannel(uint8_t channelId);
+
     /*! Initialise the library. */
     static void init();
+
+  private:
+
+    /*! Array to store the return values for getChannel(). */
+    static uint16_t channels[ESC_CHANNELS];
 
 };
 

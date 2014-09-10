@@ -11,7 +11,7 @@
 #define TAU 6.28318530718
 
 #ifdef IMU_DEBUG
-  #define DEBUG_SKIP 50
+  #define IMU_DEBUG_SKIP 50
 #endif
 
 // ================================ Public ================================ //
@@ -101,7 +101,7 @@ uint8_t IMU::refresh()
 #ifdef IMU_DEBUG
   void IMU::debug()
   {
-    if(++debugCounter == DEBUG_SKIP)
+    if(++debugCounter == IMU_DEBUG_SKIP)
     {
       debugCounter = 0;
 
