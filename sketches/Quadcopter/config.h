@@ -15,8 +15,8 @@
 #define MOTOR_OFF 100
 #define MOTOR_STALL 150
 #define MOTOR_MIN 200
-#define MOTOR_IDLE 1000
 #define MOTOR_MAX 2000
+#define MOTOR_IDLE ((MOTOR_MIN + MOTOR_MAX) / 2)
 
 #define MOTOR_FRONT 3
 #define MOTOR_LEFT 0

@@ -124,26 +124,32 @@ void updateMotors()
   );
 
   // Compute the motor mix
-  uint16_t motor[4];
-  float base = MOTOR_IDLE + (THROTTLE_K * throttle);
-  motor[MOTOR_FRONT] = base + pitchRatePID.getControl() - yawRatePID.getControl();
-  motor[MOTOR_LEFT] = base + rollRatePID.getControl() + yawRatePID.getControl();
-  motor[MOTOR_BACK] = base - pitchRatePID.getControl() - yawRatePID.getControl();
-  motor[MOTOR_RIGHT] = base - rollRatePID.getControl() + yawRatePID.getControl();
+  int16_t motor[4];
+  motor[MOTOR_FRONT] = MOTOR_IDLE + pitchRatePID.getControl() - yawRatePID.getControl();
+  motor[MOTOR_LEFT] = MOTOR_IDLE + rollRatePID.getControl() + yawRatePID.getControl();
+  motor[MOTOR_BACK] = MOTOR_IDLE - pitchRatePID.getControl() - yawRatePID.getControl();
+  motor[MOTOR_RIGHT] = MOTOR_IDLE - rollRatePID.getControl() + yawRatePID.getControl();
 
-  // Fix the motor mix range
-  int16_t motorFix = 0;
-  uint16_t motorMin = motor[0], motorMax = motor[0];
+  // Limit the motors
+  for(int i=0 ; i<4 ; i++)
+  {
+    if(motor[i] < MOTOR_MIN) motor[i] = MOTOR_MIN;
+    else if(motor[i] > MOTOR_MAX) motor[i] = MOTOR_MAX;
+  }
+
+  // Calculate the throttle contribution
+  int16_t throttleFix = THROTTLE_K * throttle;
+  int16_t motorMin = motor[0], motorMax = motor[0];
   for(int i=1 ; i<4 ; i++)
   {
     if(motor[i] < motorMin) motorMin = motor[i];
-    if(motor[i] > motorMax) motorMax = motor[i];
+    else if(motor[i] > motorMax) motorMax = motor[i];
   }
-  if(motorMin < MOTOR_MIN) motorFix = MOTOR_MIN - motorMin;
-  else if(motorMax > MOTOR_MAX) motorFix = MOTOR_MAX - motorMax;
+  if(motorMin + throttleFix < MOTOR_MIN) throttleFix = MOTOR_MIN - motorMin;
+  else if(motorMax + throttleFix > MOTOR_MAX) throttleFix = MOTOR_MAX - motorMax;
 
   // Update the ESCs
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, motor[i] + motorFix);
+  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, motor[i] + throttleFix);
 }
 
 void setup()
