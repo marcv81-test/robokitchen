@@ -1,0 +1,36 @@
+#include "gtest/gtest.h"
+#include "QuadMotor.h"
+#include "ESC.h"
+
+TEST(QuadMotorTest, Bounds)
+{
+  QuadMotor::mix(0.0, 2000.0, 0.0, 0.0);
+  ASSERT_LE(ESC::getChannel(MOTOR_FRONT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_FRONT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_LEFT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_LEFT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_BACK), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_BACK), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MIN);
+
+  QuadMotor::mix(0.0, 0.0, 2000.0, 0.0);
+  ASSERT_LE(ESC::getChannel(MOTOR_FRONT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_FRONT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_LEFT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_LEFT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_BACK), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_BACK), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MIN);
+
+  QuadMotor::mix(0.0, 0.0, 0.0, 2000.0);
+  ASSERT_LE(ESC::getChannel(MOTOR_FRONT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_FRONT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_LEFT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_LEFT), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_BACK), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_BACK), MOTOR_MIN);
+  ASSERT_LE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MAX);
+  ASSERT_GE(ESC::getChannel(MOTOR_RIGHT), MOTOR_MIN);
+}

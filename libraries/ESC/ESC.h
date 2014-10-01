@@ -1,8 +1,11 @@
 #ifndef ESC_H
 #define ESC_H
 
-#include <Arduino.h>
-#include "config.h"
+#ifndef UNIT_TEST
+  #include <Arduino.h>
+#else
+  #include "ArduinoMock.h"
+#endif
 
 #define ESC_CHANNELS 4
 

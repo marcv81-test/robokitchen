@@ -1,11 +1,11 @@
-CPPFLAGS += -isystem $(GTEST_DIR)/include -I ArduinoMock -I Quaternion -DUNIT_TEST
+CPPFLAGS += -isystem $(GTEST_DIR)/include -I ArduinoMock -I Quaternion -I QuadMotor -I ESC -DUNIT_TEST
 
 CXXFLAGS += -g -Wall -Wextra -pthread
 
 GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
-TESTS = QuaternionTest
+TESTS = QuaternionTest QuadMotorTest
 
 all : $(TESTS)
 
@@ -35,4 +35,16 @@ QuaternionTest.o : Quaternion/QuaternionTest.cpp Quaternion/Quaternion.h $(GTEST
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c Quaternion/QuaternionTest.cpp
 
 QuaternionTest : Quaternion.o QuaternionTest.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+QuadMotor.o : QuadMotor/QuadMotor.cpp QuadMotor/QuadMotor.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c QuadMotor/QuadMotor.cpp
+
+ESCMock.o : ESC/ESCMock.cpp ESC/ESC.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c ESC/ESCMock.cpp
+
+QuadMotorTest.o : QuadMotor/QuadMotorTest.cpp QuadMotor/QuadMotor.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c QuadMotor/QuadMotorTest.cpp
+
+QuadMotorTest : QuadMotor.o QuadMotorTest.o ESCMock.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
