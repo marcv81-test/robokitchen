@@ -1,8 +1,11 @@
 #ifndef QUATERNION_H
 #define QUATERNION_H
 
-#include <Arduino.h>
-#include "config.h"
+#ifndef UNIT_TEST
+  #include <Arduino.h>
+#else
+  #include "ArduinoMock.h"
+#endif
 
 class Quaternion;
 class Vector;
