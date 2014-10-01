@@ -10,19 +10,6 @@
 // Threshold under which the sticks are considered centered
 #define RX_CENTER 5
 
-/* --- Motors --- */
-
-#define MOTOR_OFF 100
-#define MOTOR_STALL 150
-#define MOTOR_MIN 200
-#define MOTOR_MAX 2000
-#define MOTOR_IDLE ((MOTOR_MIN + MOTOR_MAX) / 2)
-
-#define MOTOR_FRONT 3
-#define MOTOR_LEFT 0
-#define MOTOR_BACK 1
-#define MOTOR_RIGHT 2
-
 /* --- Throttle --- */
 
 #define THROTTLE_CUT -80

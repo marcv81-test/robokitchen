@@ -2,24 +2,11 @@
 
 #include "ESC.h"
 #include "PPMRX.h"
+#include "QuadMotor.h"
 
 int8_t throttle, rudder, elevator, ailerons, aux;
 
 #define ABS(X) ((X) < 0) ? -(X) : (X)
-
-void initMotors()
-{
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_MAX);
-  delay(3000);
-
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_STALL);
-  delay(2000);
-}
-
-void stopMotors()
-{
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_OFF);
-}
 
 void updateMotors()
 {
@@ -60,7 +47,7 @@ void updateMotors()
 void setup()
 {
   ESC::init();
-  initMotors();
+  QuadMotor::init();
 
   Serial.begin(115200);
   Serial.println("");
@@ -83,6 +70,6 @@ void loop()
   }
   else
   {
-    stopMotors();
+    QuadMotor::stop();
   }
 }

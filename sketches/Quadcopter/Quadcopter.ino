@@ -5,6 +5,7 @@
 #include "ESC.h"
 #include "PID.h"
 #include "PPMRX.h"
+#include "QuadMotor.h"
 
 int8_t throttle, rudder, elevator, ailerons;
 
@@ -43,23 +44,10 @@ PIDController yawRatePID = PIDController(
 
 #endif
 
-// Calibrate the ESCs controlling the motors
-void initMotors()
-{
-  // Calibrate the max ESC PWM input
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_MAX);
-  delay(3000);
-
-  // Calibrate the min ESC PWM input (the motors stall below this value)
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_STALL);
-  delay(2000);
-}
-
 // Stop all the motors
 void stopMotors()
 {
-  // Stop all the motors
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_OFF);
+  QuadMotor::stop();
 
   // Reset the PIDs
   rollRatePID.reset();
@@ -123,39 +111,18 @@ void updateMotors()
     IMU::getLoopTime()
   );
 
-  // Compute the motor mix
-  int16_t motor[4];
-  motor[MOTOR_FRONT] = MOTOR_IDLE + pitchRatePID.getControl() - yawRatePID.getControl();
-  motor[MOTOR_LEFT] = MOTOR_IDLE + rollRatePID.getControl() + yawRatePID.getControl();
-  motor[MOTOR_BACK] = MOTOR_IDLE - pitchRatePID.getControl() - yawRatePID.getControl();
-  motor[MOTOR_RIGHT] = MOTOR_IDLE - rollRatePID.getControl() + yawRatePID.getControl();
-
-  // Limit the motors
-  for(int i=0 ; i<4 ; i++)
-  {
-    if(motor[i] < MOTOR_MIN) motor[i] = MOTOR_MIN;
-    else if(motor[i] > MOTOR_MAX) motor[i] = MOTOR_MAX;
-  }
-
-  // Calculate the throttle contribution
-  int16_t throttleFix = THROTTLE_K * throttle;
-  int16_t motorMin = motor[0], motorMax = motor[0];
-  for(int i=1 ; i<4 ; i++)
-  {
-    if(motor[i] < motorMin) motorMin = motor[i];
-    else if(motor[i] > motorMax) motorMax = motor[i];
-  }
-  if(motorMin + throttleFix < MOTOR_MIN) throttleFix = MOTOR_MIN - motorMin;
-  else if(motorMax + throttleFix > MOTOR_MAX) throttleFix = MOTOR_MAX - motorMax;
-
-  // Update the ESCs
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, motor[i] + throttleFix);
+  QuadMotor::mix(
+    THROTTLE_K * throttle,
+    rollRatePID.getControl(),
+    pitchRatePID.getControl(),
+    yawRatePID.getControl()
+  );
 }
 
 void setup()
 {
   ESC::init();
-  initMotors();
+  QuadMotor::init();
 
   Serial.begin(115200);
   Serial.println("");
