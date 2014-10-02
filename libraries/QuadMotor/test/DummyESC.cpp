@@ -1,4 +1,5 @@
-#include "ArduinoMock.h"
+#include <Arduino.h>
+#include "config.h"
 
 #include "ESC.h"
 
