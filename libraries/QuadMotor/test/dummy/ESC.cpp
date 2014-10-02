@@ -20,8 +20,4 @@ uint16_t ESC::getChannel(uint8_t channelId)
   else { return 0; }
 }
 
-void ESC::init()
-{
-}
-
 uint16_t ESC::channels[] = {};

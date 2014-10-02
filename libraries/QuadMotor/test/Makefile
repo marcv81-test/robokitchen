@@ -1,4 +1,4 @@
-CPPFLAGS += -isystem $(GTEST_DIR)/include -isystem . -I .. -I ../../ESC -DUNIT_TEST
+CPPFLAGS += -isystem $(GTEST_DIR)/include -isystem system -I . -I .. -I dummy
 
 CXXFLAGS += -g -Wall -Wextra -pthread
 
@@ -31,11 +31,11 @@ gtest_main.a : gtest-all.o gtest_main.o
 QuadMotor.o : ../QuadMotor.cpp ../QuadMotor.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c ../QuadMotor.cpp
 
-DummyESC.o : DummyESC.cpp ../../ESC/ESC.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c DummyESC.cpp
+ESC.o : dummy/ESC.cpp dummy/ESC.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c dummy/ESC.cpp
 
-QuadMotorTest.o : QuadMotorTest.cpp ../QuadMotor.h $(GTEST_HEADERS)
+QuadMotorTest.o : QuadMotorTest.cpp $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c QuadMotorTest.cpp
 
-QuadMotorTest : QuadMotor.o QuadMotorTest.o DummyESC.o gtest_main.a
+QuadMotorTest : QuadMotor.o QuadMotorTest.o ESC.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
