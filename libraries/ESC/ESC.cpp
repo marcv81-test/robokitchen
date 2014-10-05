@@ -14,6 +14,8 @@ void ESC::setChannel(uint8_t channelId, uint16_t time)
 {
   if(channelId < ESC_CHANNELS)
   {
+    channels[channelId] = time;
+
     uint8_t outputCompare = time >> 3;
 
     switch(channelId)
@@ -35,6 +37,15 @@ void ESC::setChannel(uint8_t channelId, uint16_t time)
       break;
     }
   }
+}
+
+uint16_t ESC::getChannel(uint8_t channelId)
+{
+  if(channelId < ESC_CHANNELS)
+  {
+    return channels[channelId];
+  }
+  else { return 0; }
 }
 
 void ESC::init()
@@ -105,3 +116,5 @@ void ESC::stop()
 {
   for(int i=0 ; i<ESC_CHANNELS ; i++) ESC::setChannel(i, MOTOR_OFF);
 }
+
+uint16_t ESC::channels[] = {};
