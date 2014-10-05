@@ -91,4 +91,17 @@ void ESC::init()
   // Table 18-7: Compare Output Mode, Phase Correct PWM, pin 3
   sbi(TCCR2A, COM2B1);
   cbi(TCCR2A, COM2B0);
+
+  // Calibrate the ESCs (max)
+  for(int i=0 ; i<ESC_CHANNELS ; i++) ESC::setChannel(i, MOTOR_MAX);
+  delay(3000);
+
+  // Calibrate the ESCs (min)
+  for(int i=0 ; i<ESC_CHANNELS ; i++) ESC::setChannel(i, MOTOR_STALL);
+  delay(2000);
+}
+
+void ESC::stop()
+{
+  for(int i=0 ; i<ESC_CHANNELS ; i++) ESC::setChannel(i, MOTOR_OFF);
 }

@@ -43,23 +43,11 @@ PIDController yawRatePID = PIDController(
 
 #endif
 
-// Calibrate the ESCs controlling the motors
-void initMotors()
-{
-  // Calibrate the max ESC PWM input
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_MAX);
-  delay(3000);
-
-  // Calibrate the min ESC PWM input (the motors stall below this value)
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_STALL);
-  delay(2000);
-}
-
 // Stop all the motors
 void stopMotors()
 {
   // Stop all the motors
-  for(int i=0 ; i<4 ; i++) ESC::setChannel(i, MOTOR_OFF);
+  ESC::stop();
 
   // Reset the PIDs
   rollRatePID.reset();
@@ -155,7 +143,6 @@ void updateMotors()
 void setup()
 {
   ESC::init();
-  initMotors();
 
   Serial.begin(115200);
   Serial.println("");
