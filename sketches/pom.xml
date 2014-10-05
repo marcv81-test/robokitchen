@@ -12,7 +12,12 @@
     <module>SonarTest</module>
     <module>MPU6050Test</module>
     <module>HMC5883LTest</module>
-    <module>IMUTest</module>
+    <module>IMU0Test</module>
+    <module>IMU1Test</module>
+    <module>IMU2Test</module>
+    <module>IMU3Test</module>
+    <module>IMU4Test</module>
+    <module>IMU5Test</module>
     <module>BMP085Test</module>
     <module>RXTest</module>
     <module>ServoTest</module>
