@@ -7,6 +7,11 @@
 #include "PPMRX.h"
 
 int8_t throttle, rudder, elevator, ailerons;
+float rollTarget, pitchTarget, yawTarget;
+
+#ifdef PID_DEBUG
+  float totalTime = 0.0;
+#endif
 
 // Roll and pitch rates PIDs
 PIDController rollRatePID = PIDController(
@@ -57,6 +62,10 @@ void stopMotors()
     rollPID.reset();
     pitchPID.reset();
   #endif
+
+  #ifdef PID_DEBUG
+    totalTime = 0.0;
+  #endif
 }
 
 // Update the motors to follow the sticks
@@ -65,13 +74,15 @@ void updateMotors()
   #ifdef ATTITUDE_MODE
 
     // Update the roll and pitch angles PIDs
+    rollTarget = MAX_ROLL_PITCH * ailerons / 100.0;
     rollPID.update(
-      MAX_ROLL_PITCH * ailerons / 100.0,
+      rollTarget,
       IMU::getRoll(),
       IMU::getLoopTime()
     );
+    pitchTarget = MAX_ROLL_PITCH * elevator / 100.0;
     pitchPID.update(
-      MAX_ROLL_PITCH * elevator / 100.0,
+      pitchTarget,
       IMU::getPitch(),
       IMU::getLoopTime()
     );
@@ -91,13 +102,15 @@ void updateMotors()
   #else
 
     // Update the roll and pitch rates PIDs
+    rollTarget = MAX_ROLL_PITCH_RATE * ailerons / 100.0;
     rollRatePID.update(
-      MAX_ROLL_PITCH_RATE * ailerons / 100.0,
+      rollTarget,
       IMU::getRollRate(),
       IMU::getLoopTime()
     );
+    pitchTarget = MAX_ROLL_PITCH_RATE * elevator / 100.0;
     pitchRatePID.update(
-      MAX_ROLL_PITCH_RATE * elevator / 100.0,
+      pitchTarget,
       IMU::getPitchRate(),
       IMU::getLoopTime()
     );
@@ -105,8 +118,9 @@ void updateMotors()
   #endif
 
   // Update the yaw rate PID
+  yawTarget = MAX_YAW_RATE * rudder / 100.0;
   yawRatePID.update(
-    MAX_YAW_RATE * rudder / 100.0,
+    yawTarget,
     IMU::getYawRate(),
     IMU::getLoopTime()
   );
@@ -177,14 +191,86 @@ void loop()
       ailerons = PPMRX::getChannel(PPMRX_CHANNEL_AILERONS);
 
       // If we could read the IMU update the motors
-      if(readIMU) updateMotors();
+      if(readIMU)
+      {
+        updateMotors();
+
+        #ifdef IMU_DEBUG
+          IMU::debug();
+        #endif
+        #ifdef PID_DEBUG
+          totalTime += IMU::getLoopTime();
+          debugPID();
+        #endif
+      }
     }
   }
 
   // If could not read the sticks stop the motors
   else stopMotors();
-
-  #ifdef IMU_DEBUG
-    if(readIMU) IMU::debug();
-  #endif
 }
+
+#ifdef PID_DEBUG
+  void debugPID()
+  {
+    // Motors
+    Serial.print(ESC::getChannel(MOTOR_FRONT));
+    Serial.print(",");
+    Serial.print(ESC::getChannel(MOTOR_LEFT));
+    Serial.print(",");
+    Serial.print(ESC::getChannel(MOTOR_BACK));
+    Serial.print(",");
+    Serial.print(ESC::getChannel(MOTOR_RIGHT));
+    Serial.print(",");
+
+    // Attitude mode
+    #ifdef ATTITUDE_MODE
+
+      // Angular positions
+      Serial.print(rollTarget, 3);
+      Serial.print(",");
+      Serial.print(IMU::getRoll(), 3);
+      Serial.print(",");
+      Serial.print(pitchTarget, 3);
+      Serial.print(",");
+      Serial.print(IMU::getPitch(), 3);
+      Serial.print(",");
+
+      // Angular rates
+      Serial.print(rollPID.getControl(), 3);
+      Serial.print(",");
+      Serial.print(IMU::getRollRate(), 3);
+      Serial.print(",");
+      Serial.print(pitchPID.getControl(), 3);
+      Serial.print(",");
+      Serial.print(IMU::getPitchRate(), 3);
+      Serial.print(",");
+
+    #endif
+
+    // Manual mode
+    #ifndef ATTITUDE_MODE
+
+      // Angular rates
+      Serial.print(rollTarget, 3);
+      Serial.print(",");
+      Serial.print(IMU::getRollRate(), 3);
+      Serial.print(",");
+      Serial.print(pitchTarget, 3);
+      Serial.print(",");
+      Serial.print(IMU::getPitchRate(), 3);
+      Serial.print(",");
+
+    #endif
+
+    // Yaw
+    Serial.print(yawTarget, 3);
+    Serial.print(",");
+    Serial.print(IMU::getYawRate(), 3);
+    Serial.print(",");
+
+    // Time
+    Serial.print(totalTime, 5);
+    Serial.println("");
+  }
+#endif

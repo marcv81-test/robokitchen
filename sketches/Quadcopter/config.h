@@ -3,6 +3,8 @@
 
 #define ATTITUDE_MODE
 
+#define PID_DEBUG
+
 // IMU configuration
 #define MPU6050_DLPF_SETTING 6 // 5Hz cut-off
 #define IMU_ANGLES
