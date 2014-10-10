@@ -8,8 +8,6 @@
   #include "HMC5883L.h"
 #endif
 
-#define TAU 6.28318530718
-
 #ifdef IMU_DEBUG
   #define DEBUG_SKIP 50
 #endif
