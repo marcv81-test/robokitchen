@@ -176,11 +176,6 @@ void loop()
       elevator = PPMRX::getChannel(PPMRX_CHANNEL_ELEVATOR);
       ailerons = PPMRX::getChannel(PPMRX_CHANNEL_AILERONS);
 
-      // Center the sticks which are almost centered
-      if ((rudder < RX_CENTER) && (rudder > -RX_CENTER)) rudder = 0;
-      if ((elevator < RX_CENTER) && (elevator > -RX_CENTER)) elevator = 0;
-      if ((ailerons < RX_CENTER) && (ailerons > -RX_CENTER)) ailerons = 0;
-
       // If we could read the IMU update the motors
       if(readIMU) updateMotors();
     }

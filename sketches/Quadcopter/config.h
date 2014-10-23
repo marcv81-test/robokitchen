@@ -7,9 +7,6 @@
 #define MPU6050_DLPF_SETTING 6 // 5Hz cut-off
 #define IMU_ANGLES
 
-// Threshold under which the sticks are considered centered
-#define RX_CENTER 5
-
 /* --- Motors --- */
 
 #define MOTOR_FRONT 3
