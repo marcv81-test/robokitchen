@@ -36,47 +36,47 @@ void loop()
     if(PS2Controller::update())
     {
       Serial.print("B0=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_0));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_SELECT));
       Serial.print(", B1=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_1));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_L3));
       Serial.print(", B2=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_2));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_R3));
       Serial.print(", B3=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_3));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_START));
       Serial.print(", B4=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_4));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_UP));
       Serial.print(", B5=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_5));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_RIGHT));
       Serial.print(", B6=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_6));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_DOWN));
       Serial.print(", B7=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_7));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_LEFT));
       Serial.print(", B8=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_8));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_L2));
       Serial.print(", B9=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_9));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_R2));
       Serial.print(", B10=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_A));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_L1));
       Serial.print(", B11=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_B));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_R1));
       Serial.print(", B12=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_C));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_TRIANGLE));
       Serial.print(", B13=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_D));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_CIRCLE));
       Serial.print(", B14=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_E));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_CROSS));
       Serial.print(", B15=");
-      Serial.print(PS2Controller::getButton(PS2_BUTTON_F));
+      Serial.print(PS2Controller::getButton(PS2_BUTTON_SQUARE));
       if(PS2Controller::isAnalog())
       {
         Serial.print(", A0=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_0));
+        Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_HORIZONTAL));
         Serial.print(", A1=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_1));
+        Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_VERTICAL));
         Serial.print(", A2=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_2));
+        Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_HORIZONTAL));
         Serial.print(", A3=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_3));
+        Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_VERTICAL));
       }
       Serial.println("");
     }
