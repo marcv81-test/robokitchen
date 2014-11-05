@@ -19,6 +19,7 @@
     <module>SerialRelay</module>
     <module>QuadMotorTest</module>
     <module>Quadcopter</module>
+    <module>PS2Test</module>
   </modules>
 
 </project>
