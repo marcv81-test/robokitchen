@@ -1,0 +1,6 @@
+//#define PS2_DEBUG
+
+#define SHOW_PS2_STATSTICS
+#define SHOW_PS2_STATUS
+#define POST_FRAME_DELAY 6
+
