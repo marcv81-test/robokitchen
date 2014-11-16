@@ -36,7 +36,7 @@ class PS2Controller
 {
   public:
 
-    /*! Initialises the SPI bus. */
+    /*! Initialises the library to communicate over SPI. */
     static void init();
 
     /*!
@@ -46,33 +46,62 @@ class PS2Controller
      */
     static bool update();
 
-    /*!
-     * This function returns whether the controller is in analog mode or not.
-     * Calls to obtain joystick axes or joystick buttons status are only valid
-     * if this function returns true.
-     */
-    static bool isAnalog();
-
     static bool getButton(uint16_t button);
     static uint8_t getAxis(uint8_t axis);
 
   private:
 
-    // Type to store the buttons/joysticks status
+    #ifdef PS2_DEBUG_STATISTICS
+      static uint8_t transmittedFramesCounter; // Frames transmitted
+      static uint8_t receivedFramesCounter; // Frames received
+      static uint8_t validFramesCounter; // Frames received with okay header
+    #endif
+
     typedef union {
       struct {
-        uint16_t buttons;
-        uint8_t axis[4];
+        uint8_t header[3];
+        uint8_t data[6];
       };
-      uint8_t raw[6];
-    } status_t;
+      uint8_t raw[9];
+    } txBuffer_t;
 
-    static uint8_t mode;
-    static status_t status;
+    typedef union {
+      struct {
+        uint8_t header[3];
+        union {
+          struct {
+            uint16_t buttons;
+            uint8_t axis[4];
+          };
+          uint8_t data[6];
+        };
+      };
+      uint8_t raw[9];
+    } rxBuffer_t;
 
-    static uint8_t transferByte(uint8_t out);
-    static bool transferCommand(uint8_t command);
-    static uint8_t transferPayload(uint8_t payload);
+    /*! Transmission buffer. */
+    static txBuffer_t txBuffer;
+
+    /*! Reception buffer. */
+    static rxBuffer_t rxBuffer;
+
+    /*!
+     * Transmits a frame from txBuffer and receives the results into rxBuffer.
+     * Aborts the exchange after the header if there is a communication error
+     * or if the controller is not in the expected mode.
+     *
+     * @param length Number of data bytes in txBuffer, excluding the 3
+     * header bytes
+     * @param expectedMode Expected controller mode (PS2_MODE_STANDARD,
+     * PS2_MODE_ANALOG or PS2_MODE_CONFIG) or 0 to skip checking the mode
+     * @return Whether the frame was exchanged successfully or not.
+     */
+    static bool transferFrame(uint8_t length, uint8_t expectedMode);
+
+    static bool poll();
+    static bool enterConfig();
+    static bool exitConfig();
+    static bool enableAnalogMode();
 };
 
 #endif // PS2_CONTROLLER_H

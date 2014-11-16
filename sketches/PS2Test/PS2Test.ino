@@ -16,25 +16,9 @@ void setup()
 
 void loop()
 {
-  #ifdef SHOW_PS2_STATSTICS
-    uint8_t percentage = 0;
-    uint32_t startTime = micros();
-    for(uint8_t i=0; i<100; i++)
-    {
-      if(PS2Controller::update()) { percentage++; }
-      delayMicroseconds(POST_FRAME_DELAY);
-    }
-    uint32_t stopTime = micros();
-    Serial.print("Success rate: ");
-    Serial.print(percentage);
-    Serial.print("%, Average frame duration: ");
-    Serial.print((stopTime - startTime) / 100 - POST_FRAME_DELAY);
-    Serial.println("us");
-  #endif
-
-  #ifdef SHOW_PS2_STATUS
-    if(PS2Controller::update())
-    {
+  if(PS2Controller::update())
+  {
+    #ifdef SHOW_PS2_STATUS
       Serial.print("B0=");
       Serial.print(PS2Controller::getButton(PS2_BUTTON_SELECT));
       Serial.print(", B1=");
@@ -67,23 +51,16 @@ void loop()
       Serial.print(PS2Controller::getButton(PS2_BUTTON_CROSS));
       Serial.print(", B15=");
       Serial.print(PS2Controller::getButton(PS2_BUTTON_SQUARE));
-      if(PS2Controller::isAnalog())
-      {
-        Serial.print(", A0=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_HORIZONTAL));
-        Serial.print(", A1=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_VERTICAL));
-        Serial.print(", A2=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_HORIZONTAL));
-        Serial.print(", A3=");
-        Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_VERTICAL));
-      }
+      Serial.print(", A0=");
+      Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_HORIZONTAL));
+      Serial.print(", A1=");
+      Serial.print(PS2Controller::getAxis(PS2_AXIS_RIGHT_VERTICAL));
+      Serial.print(", A2=");
+      Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_HORIZONTAL));
+      Serial.print(", A3=");
+      Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_VERTICAL));
       Serial.println("");
-    }
-    else
-    {
-      Serial.println("Read error");
-    }
-  #endif
+    #endif
+  }
 }
 

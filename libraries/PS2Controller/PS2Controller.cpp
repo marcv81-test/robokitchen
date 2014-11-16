@@ -5,17 +5,19 @@
 
 #include "PS2Controller.h"
 
+// Controller modes definition
+#define PS2_MODE_STANDARD 0x40
+#define PS2_MODE_ANALOG 0x70
+#define PS2_MODE_CONFIG 0xF0
+
 // Empirical delays
-#define PS2_DELAY_AFTER_SLAVE_SELECT 7
-#define PS2_DELAY_BETWEEN_WORDS 8
+#define PS2_DELAY_BETWEEN_BYTES 8
+#define PS2_DELAY_BETWEEN_FRAMES 4000
 
 #define SPI_SS 10
 #define SPI_MOSI 11
 #define SPI_MISO 12
 #define SPI_SCLK 13
-
-#define PS2_MODE_ANALOG 0x73
-#define PS2_MODE_STANDARD 0x41
 
 // ================================ Public ================================ //
 
@@ -26,93 +28,197 @@ void PS2Controller::init()
   SPI.setDataMode(SPI_MODE3); // CPOL=1, CPHA=1
   SPI.setClockDivider(SPI_CLOCK_DIV32); // 500kHz
   SPI.setBitOrder(LSBFIRST);
+
+  // Set TX buffer constants
+  txBuffer.header[0] = 0x01;
+  txBuffer.header[2] = 0x00;
+
+  // Configure the controller
+  enterConfig();
+  enableAnalogMode();
+  exitConfig();
 }
 
 bool PS2Controller::update()
 {
-  bool success = false;
-  digitalWrite(SPI_SS, LOW);
-  delayMicroseconds(PS2_DELAY_AFTER_SLAVE_SELECT);
-
-  if(transferCommand(0x42))
-  {
-    switch(mode)
-    {
-      // Analog mode
-      case PS2_MODE_ANALOG:
-      for(uint8_t i=0; i<6; i++) status.raw[i] = transferPayload(0x00);
-      success = true;
-      break;
-
-      // Standard mode
-      case PS2_MODE_STANDARD:
-      for(uint8_t i=0; i<2; i++) status.raw[i] = transferPayload(0x00);
-      success = true;
-      break;
-    }
-  }
-
-  digitalWrite(SPI_SS, HIGH);
-  return success;
-}
-
-bool PS2Controller::isAnalog()
-{
-  return (mode == PS2_MODE_ANALOG);
+  return poll();
 }
 
 bool PS2Controller::getButton(uint16_t button)
 {
-  return ~status.buttons & button;
+  return ~rxBuffer.buttons & button;
 }
 
 uint8_t PS2Controller::getAxis(uint8_t axis)
 {
-  return status.axis[axis];
+  return rxBuffer.axis[axis];
 }
 
 // ================================ Private ================================ //
 
-uint8_t PS2Controller::mode;
-PS2Controller::status_t PS2Controller::status;
+#ifdef PS2_DEBUG_STATISTICS
+  uint8_t PS2Controller::transmittedFramesCounter;
+  uint8_t PS2Controller::receivedFramesCounter;
+  uint8_t PS2Controller::validFramesCounter;
+#endif
 
-uint8_t PS2Controller::transferByte(uint8_t out)
+PS2Controller::txBuffer_t PS2Controller::txBuffer;
+PS2Controller::rxBuffer_t PS2Controller::rxBuffer;
+
+bool PS2Controller::transferFrame(uint8_t length, uint8_t expectedMode)
 {
-  uint8_t in = SPI.transfer(out);
+  bool status = false;
 
-  #ifdef PS2_DEBUG
-    Serial.print(out, HEX);
-    Serial.print(":");
-    Serial.println(in, HEX);
+  #ifdef PS2_DEBUG_STATISTICS
+    transmittedFramesCounter++;
   #endif
 
-  return in;
+  // Select the slave
+  digitalWrite(SPI_SS, LOW);
+
+  // Exchange the header
+  for(uint8_t i=0; i<3; i++)
+  {
+    delayMicroseconds(PS2_DELAY_BETWEEN_BYTES);
+    rxBuffer.header[i] = SPI.transfer(txBuffer.header[i]);
+  }
+
+  // If the controller set the line low for any header bit
+  if((rxBuffer.header[0] & rxBuffer.header[1] & rxBuffer.header[2]) != 0xff)
+  {
+    #ifdef PS2_DEBUG_STATISTICS
+      receivedFramesCounter++;
+    #endif
+
+    // If the controller answered with a valid header (0xff 0x?? 0x5a)
+    // And the expected mode is either 0 or matches the header
+    if(
+      (rxBuffer.header[0] == 0xff) && (rxBuffer.header[2] == 0x5a) &&
+      ((expectedMode == 0) || (expectedMode == (rxBuffer.header[1] & 0xf0)))
+    )
+    {
+      status = true;
+
+      #ifdef PS2_DEBUG_STATISTICS
+        validFramesCounter++;
+      #endif
+
+      // Exchange the data
+      for(uint8_t i=0; i<length; i++)
+      {
+        delayMicroseconds(PS2_DELAY_BETWEEN_BYTES);
+        rxBuffer.data[i] = SPI.transfer(txBuffer.data[i]);
+      }
+    }
+  }
+
+  // Release the slave
+  digitalWrite(SPI_SS, HIGH);
+
+  // Wait between frames
+  delayMicroseconds(PS2_DELAY_BETWEEN_FRAMES);
+
+  // Print the frame contents
+  #if PS2_DEBUG_LEVEL == 1
+    if(!status)
+    {
+  #endif
+  #if PS2_DEBUG_LEVEL >= 1
+    uint8_t frameLength = 3 + (status ? length : 0);
+    Serial.print("TX:");
+    for(uint8_t i=0; i<frameLength; i++)
+    {
+      Serial.print(" ");
+      if(txBuffer.raw[i] < 0x10) Serial.print("0");
+      Serial.print(txBuffer.raw[i], HEX);
+    }
+    Serial.println();
+    Serial.print("RX:");
+    for(uint8_t i=0; i<frameLength; i++)
+    {
+      Serial.print(" ");
+      if(rxBuffer.raw[i] < 0x10) Serial.print("0");
+      Serial.print(rxBuffer.raw[i], HEX);
+    }
+    Serial.println();
+  #endif
+  #if PS2_DEBUG_LEVEL == 1
+    }
+  #endif
+
+  // Print frames statistics
+  #ifdef PS2_DEBUG_STATISTICS
+    if(transmittedFramesCounter == 100)
+    {
+      Serial.print("Received frames: ");
+      Serial.print(receivedFramesCounter);
+      Serial.print("%, ");
+      Serial.print("Valid frames: ");
+      Serial.print(validFramesCounter);
+      Serial.println("%");
+
+      transmittedFramesCounter = 0;
+      receivedFramesCounter = 0;
+      validFramesCounter = 0;
+    }
+  #endif
+
+  return status;
 }
 
-bool PS2Controller::transferCommand(uint8_t command)
+bool PS2Controller::poll()
 {
-  uint8_t response[3];
+  txBuffer.header[1] = 0x42;
 
-  response[0] = transferByte(0x01);
-  delayMicroseconds(PS2_DELAY_BETWEEN_WORDS);
-  response[1] = transferByte(command);
-  delayMicroseconds(PS2_DELAY_BETWEEN_WORDS);
-  response[2] = transferByte(0x00);
+  txBuffer.data[0] = 0x00;
+  txBuffer.data[1] = 0x00;
+  txBuffer.data[2] = 0x00;
+  txBuffer.data[3] = 0x00;
+  txBuffer.data[4] = 0x00;
+  txBuffer.data[5] = 0x00;
 
-  if((response[0] == 0xff) && (response[2] == 0x5A))
-  {
-    mode = response[1];
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  return transferFrame(6, PS2_MODE_ANALOG);
 }
 
-uint8_t PS2Controller::transferPayload(uint8_t payload)
+bool PS2Controller::enterConfig()
 {
-  delayMicroseconds(PS2_DELAY_BETWEEN_WORDS);
-  return transferByte(payload);
+  txBuffer.header[1] = 0x43;
+
+  txBuffer.data[0] = 0x01;
+  txBuffer.data[1] = 0x00;
+  txBuffer.data[2] = 0x00;
+  txBuffer.data[3] = 0x00;
+  txBuffer.data[4] = 0x00;
+  txBuffer.data[5] = 0x00;
+
+  return transferFrame(6, 0);
+}
+
+bool PS2Controller::exitConfig()
+{
+  txBuffer.header[1] = 0x43;
+
+  txBuffer.data[0] = 0x00;
+  txBuffer.data[1] = 0x00;
+  txBuffer.data[2] = 0x00;
+  txBuffer.data[3] = 0x00;
+  txBuffer.data[4] = 0x00;
+  txBuffer.data[5] = 0x00;
+
+  return transferFrame(6, PS2_MODE_CONFIG);
+}
+
+bool PS2Controller::enableAnalogMode()
+{
+  txBuffer.header[1] = 0x44;
+
+  txBuffer.data[0] = 0x01;
+  txBuffer.data[1] = 0x03;
+  txBuffer.data[2] = 0x00;
+  txBuffer.data[3] = 0x00;
+  txBuffer.data[4] = 0x00;
+  txBuffer.data[5] = 0x00;
+
+  return transferFrame(6, PS2_MODE_CONFIG);
 }
 
