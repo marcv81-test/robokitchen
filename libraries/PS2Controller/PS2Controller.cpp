@@ -14,6 +14,9 @@
 #define PS2_DELAY_BETWEEN_BYTES 8
 #define PS2_DELAY_BETWEEN_FRAMES 4000
 
+// Number of updates before forced reconfigurations
+#define PS2_RECONFIGURE_PERIOD 50
+
 #define SPI_SS 10
 #define SPI_MOSI 11
 #define SPI_MISO 12
@@ -32,16 +35,30 @@ void PS2Controller::init()
   // Set TX buffer constants
   txBuffer.header[0] = 0x01;
   txBuffer.header[2] = 0x00;
-
-  // Configure the controller
-  enterConfig();
-  enableAnalogMode();
-  exitConfig();
 }
 
 bool PS2Controller::update()
 {
-  return poll();
+  boolean status;
+
+  // If not reconfiguring poll the controller
+  if(reconfigureCounter++ < PS2_RECONFIGURE_PERIOD)
+  {
+    status = poll();
+  }
+
+  // Else run the reconfigure sequence then poll the controller
+  else
+  {
+    reconfigureCounter = 0;
+    status =
+      enterConfig() &&
+      enableAnalogMode() &&
+      exitConfig() &&
+      poll();
+  }
+
+  return status;
 }
 
 bool PS2Controller::getButton(uint16_t button)
@@ -61,6 +78,8 @@ uint8_t PS2Controller::getAxis(uint8_t axis)
   uint8_t PS2Controller::receivedFramesCounter;
   uint8_t PS2Controller::validFramesCounter;
 #endif
+
+uint8_t PS2Controller::reconfigureCounter;
 
 PS2Controller::txBuffer_t PS2Controller::txBuffer;
 PS2Controller::rxBuffer_t PS2Controller::rxBuffer;

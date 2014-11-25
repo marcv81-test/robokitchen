@@ -57,6 +57,9 @@ class PS2Controller
       static uint8_t validFramesCounter; // Frames received with okay header
     #endif
 
+    /*! Counter to regularly reconfigure the controller (hotplug). */
+    static uint8_t reconfigureCounter;
+
     typedef union {
       struct {
         uint8_t header[3];
