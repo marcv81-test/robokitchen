@@ -10,6 +10,10 @@
 #define PS2_MODE_ANALOG 0x70
 #define PS2_MODE_CONFIG 0xF0
 
+// Motors definition
+#define PS2_MOTOR_SMALL 0
+#define PS2_MOTOR_LARGE 1
+
 // Empirical delays
 #define PS2_DELAY_BETWEEN_BYTES 8
 #define PS2_DELAY_BETWEEN_FRAMES 4000
@@ -54,6 +58,7 @@ bool PS2Controller::update()
     status =
       enterConfig() &&
       enableAnalogMode() &&
+      enableRumble() &&
       exitConfig() &&
       poll();
   }
@@ -71,6 +76,16 @@ uint8_t PS2Controller::getAxis(uint8_t axis)
   return rxBuffer.axis[axis];
 }
 
+void PS2Controller::setSmallMotor(bool on)
+{
+  motor[PS2_MOTOR_SMALL] = on ? 0xff : 0;
+}
+
+void PS2Controller::setLargeMotor(uint8_t speed)
+{
+  motor[PS2_MOTOR_LARGE] = speed;
+}
+
 // ================================ Private ================================ //
 
 #ifdef PS2_DEBUG_STATISTICS
@@ -80,6 +95,8 @@ uint8_t PS2Controller::getAxis(uint8_t axis)
 #endif
 
 uint8_t PS2Controller::reconfigureCounter;
+
+uint8_t PS2Controller::motor[2];
 
 PS2Controller::txBuffer_t PS2Controller::txBuffer;
 PS2Controller::rxBuffer_t PS2Controller::rxBuffer;
@@ -189,8 +206,8 @@ bool PS2Controller::poll()
 {
   txBuffer.header[1] = 0x42;
 
-  txBuffer.data[0] = 0x00;
-  txBuffer.data[1] = 0x00;
+  txBuffer.data[0] = motor[0];
+  txBuffer.data[1] = motor[1];
   txBuffer.data[2] = 0x00;
   txBuffer.data[3] = 0x00;
   txBuffer.data[4] = 0x00;
@@ -237,6 +254,20 @@ bool PS2Controller::enableAnalogMode()
   txBuffer.data[3] = 0x00;
   txBuffer.data[4] = 0x00;
   txBuffer.data[5] = 0x00;
+
+  return transferFrame(6, PS2_MODE_CONFIG);
+}
+
+bool PS2Controller::enableRumble()
+{
+  txBuffer.header[1] = 0x4d;
+
+  txBuffer.data[0] = 0x00;
+  txBuffer.data[1] = 0x01;
+  txBuffer.data[2] = 0xff;
+  txBuffer.data[3] = 0xff;
+  txBuffer.data[4] = 0xff;
+  txBuffer.data[5] = 0xff;
 
   return transferFrame(6, PS2_MODE_CONFIG);
 }

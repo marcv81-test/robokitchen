@@ -61,6 +61,14 @@ void loop()
       Serial.print(PS2Controller::getAxis(PS2_AXIS_LEFT_VERTICAL));
       Serial.println("");
     #endif
+
+    // Turn the small motor on if pressing cross
+    PS2Controller::setSmallMotor(PS2Controller::getButton(PS2_BUTTON_CROSS));
+
+    // Set the large motor speed to the left vertical axis if pressing circle
+    PS2Controller::setLargeMotor(
+      PS2Controller::getButton(PS2_BUTTON_CIRCLE) ?
+      PS2Controller::getAxis(PS2_AXIS_LEFT_VERTICAL) : 0);
   }
 }
 

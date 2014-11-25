@@ -48,6 +48,8 @@ class PS2Controller
 
     static bool getButton(uint16_t button);
     static uint8_t getAxis(uint8_t axis);
+    static void setSmallMotor(bool on);
+    static void setLargeMotor(uint8_t speed);
 
   private:
 
@@ -59,6 +61,9 @@ class PS2Controller
 
     /*! Counter to regularly reconfigure the controller (hotplug). */
     static uint8_t reconfigureCounter;
+
+    /*! Speed of the two rumble motors. */
+    static uint8_t motor[2];
 
     typedef union {
       struct {
@@ -105,6 +110,7 @@ class PS2Controller
     static bool enterConfig();
     static bool exitConfig();
     static bool enableAnalogMode();
+    static bool enableRumble();
 };
 
 #endif // PS2_CONTROLLER_H
