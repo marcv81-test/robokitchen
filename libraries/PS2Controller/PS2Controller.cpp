@@ -21,6 +21,13 @@
 // Number of updates before forced reconfigurations
 #define PS2_RECONFIGURE_PERIOD 50
 
+// Internal states to send frames in the right order
+#define PS2_STATE_ENTER_CONFIG 0
+#define PS2_STATE_ENABLE_ANALOG_MODE 1
+#define PS2_STATE_ENABLE_RUMBLE 2
+#define PS2_STATE_EXIT_CONFIG 3
+#define PS2_STATE_POLL 4
+
 #define SPI_SS 10
 #define SPI_MOSI 11
 #define SPI_MISO 12
@@ -43,25 +50,52 @@ void PS2Controller::init()
 
 bool PS2Controller::update()
 {
-  boolean status;
+  // If the time hasn't come for the next frame return immediately
+  uint32_t startTime = micros();
+  if(startTime < nextFrameTime) return false;
 
-  // If not reconfiguring poll the controller
-  if(reconfigureCounter++ < PS2_RECONFIGURE_PERIOD)
+  bool status = false;
+
+  // Send a frame according to the state
+  switch(state)
   {
-    status = poll();
+    case PS2_STATE_ENTER_CONFIG:
+      if(enterConfig()) state = PS2_STATE_ENABLE_ANALOG_MODE;
+      else state = PS2_STATE_POLL;
+      break;
+
+    case PS2_STATE_ENABLE_ANALOG_MODE:
+      if(enableAnalogMode()) state = PS2_STATE_ENABLE_RUMBLE;
+      else state = PS2_STATE_POLL;
+      break;
+
+    case PS2_STATE_ENABLE_RUMBLE:
+      if(enableRumble()) state = PS2_STATE_EXIT_CONFIG;
+      else state = PS2_STATE_POLL;
+      break;
+
+    case PS2_STATE_EXIT_CONFIG:
+      exitConfig();
+      state = PS2_STATE_POLL;
+      break;
+
+    case PS2_STATE_POLL:
+      status = poll();
+      if(reconfigureCounter++ == PS2_RECONFIGURE_PERIOD)
+      {
+        reconfigureCounter = 0;
+        state = PS2_STATE_ENTER_CONFIG;
+      }
+      break;
   }
 
-  // Else run the reconfigure sequence then poll the controller
-  else
-  {
-    reconfigureCounter = 0;
-    status =
-      enterConfig() &&
-      enableAnalogMode() &&
-      enableRumble() &&
-      exitConfig() &&
-      poll();
-  }
+  // Print the update duration
+  #ifdef PS2_DEBUG_TIME
+    uint32_t stopTime = micros();
+    Serial.print("PS2 update duration: ");
+    Serial.print(stopTime - startTime);
+    Serial.println("us");
+  #endif
 
   return status;
 }
@@ -93,6 +127,9 @@ void PS2Controller::setLargeMotor(uint8_t speed)
   uint8_t PS2Controller::receivedFramesCounter;
   uint8_t PS2Controller::validFramesCounter;
 #endif
+
+uint8_t PS2Controller::state;
+uint32_t PS2Controller::nextFrameTime;
 
 uint8_t PS2Controller::reconfigureCounter;
 
@@ -151,8 +188,8 @@ bool PS2Controller::transferFrame(uint8_t length, uint8_t expectedMode)
   // Release the slave
   digitalWrite(SPI_SS, HIGH);
 
-  // Wait between frames
-  delayMicroseconds(PS2_DELAY_BETWEEN_FRAMES);
+  // Set the next frame time
+  nextFrameTime = micros() + PS2_DELAY_BETWEEN_FRAMES;
 
   // Print the frame contents
   #if PS2_DEBUG_LEVEL == 1

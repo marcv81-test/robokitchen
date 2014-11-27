@@ -1,5 +1,6 @@
 #define PS2_DEBUG_LEVEL 1
 #define PS2_DEBUG_STATISTICS
+#define PS2_DEBUG_TIME
 
 #define SHOW_PS2_STATUS
 

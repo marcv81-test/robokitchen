@@ -59,6 +59,12 @@ class PS2Controller
       static uint8_t validFramesCounter; // Frames received with okay header
     #endif
 
+    /*! Internal state to send frames in the right order. */
+    static uint8_t state;
+
+    /*! System time after which we may send the next frame. */
+    static uint32_t nextFrameTime;
+
     /*! Counter to regularly reconfigure the controller (hotplug). */
     static uint8_t reconfigureCounter;
 
